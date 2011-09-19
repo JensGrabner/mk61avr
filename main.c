@@ -1,15 +1,18 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR
+// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
 // http://code.google.com/p/mk61avr/
 //
-// SVN read-only:
-// http://mk61avr.googlecode.com/svn/trunk/ mk61avr-read-only
+// Получить локальную копию проекта из GIT:
+// git clone https://code.google.com/p/mk61avr/
 //
-// Copyright (C) 2009 digitalinvitro, vitasam70
+// Дискуссия по проекту в Google Groups:
+// http://groups.google.com/group/mk61avr_talks
+//
+// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
 // Module name: main.c
 //
-// Module description:
+// Module description: Main-файл проекта
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,7 +26,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA  02110-1301, USA.
 //
 // ***********************************************************
 //
@@ -80,7 +84,7 @@ register unsigned char TEMP asm("r17");
 
 char disp[16];                 // Буфер для хранениея CHAR эквивалента экрана
 char dispprg[12];              // Буфер для формирования дисплея при программировании
-char *pPutX = disp;            // Указатель в буфере CHAR эквивалента X на позицию ввода цифры 
+char *pPutX = disp;            // Указатель в буфере CHAR эквивалента X на позицию ввода цифры
 
 /*
 // Массив маш-кодов (программа) МК61 105 - шагов, свыше резервировано для терминального ввода
@@ -123,9 +127,9 @@ unsigned char PROGMEM MK61op[16] =
 
 /*************************************************************************
 Name: JMP_TABLE
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void JMP_TABLE(void);
@@ -133,17 +137,15 @@ void JMP_TABLE(void);
 
 /*************************************************************************
 Name: InitHAL
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Настройка динаимческой индикации дисплея и порта USART
 *************************************************************************/
 void InitHAL(void)
 {
-
-
     asm volatile(
     "push r28"                  "\n\t"
     "ldi r28, 0x02"             "\n\t"      // Линия TX на вывод, линия RX на ввод, остальные на ввод
@@ -201,24 +203,24 @@ void InitHAL(void)
     pBuff_UART   = 0;
     OS.VAL   = 0;
     dump[49] = 0x00;
- 
+
     // Инициализация задатчика времени OS и шедуллера событий по времени
     TIME_Init();
- 
-    // Инициализация модуля TWI (I2C) 
+
+    // Инициализация модуля TWI (I2C)
     TWI_Init();
     STORE_init();
- 
+
     // Init lcd
     lcd44780_init(LCD_DISP_ON);
 
-    // Clear display and home cursor 
+    // Clear display and home cursor
     lcd44780_clrscr();
- 
+
 #ifdef MK61_KEYPAD_IN_USE
     Keyboard_Init();
     ScanDC_RESET();
-#endif 
+#endif
 
     // Настройка "сна"
 #ifdef __AVR_ATmega8__
@@ -234,9 +236,9 @@ void InitHAL(void)
 
 /*************************************************************************
 Name: InitVM61
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void InitVM61(void)
@@ -255,9 +257,9 @@ void InitVM61(void)
 
 /*************************************************************************
 Name: Input_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 
     Ввод в VM61 со стороны отладочного интерфейса - не более 16 символов включая '='
@@ -267,12 +269,12 @@ unsigned char Input_rs232(signed char par)
     register unsigned char *pServMK61  = &MK61.prg[105];
     register unsigned char *pCmd = &COMMAND_BUFFER[1];
     register unsigned char opcode61;
-    
+
     while((opcode61 = *pCmd))
     {
         opcode61 -= '*';
         pCmd++;
-        
+
         if(opcode61 < 17)
         {
             opcode61 = __LPM(&MK61op[0] + opcode61);
@@ -296,7 +298,7 @@ unsigned char Input_rs232(signed char par)
         else if(opcode61 == ('w' - '*'))
         {
             opcode61 += ('*' - 'w' + 0x40);
-            
+
             if(*pCmd <= '9')
             {
                 opcode61 |= (*pCmd - '0');
@@ -313,7 +315,7 @@ unsigned char Input_rs232(signed char par)
 
         *pServMK61++ = opcode61;
     }
-    
+
     *pServMK61++ = MK61_GOTO;
     *pServMK61   = PC;
     PC = 105;
@@ -326,15 +328,15 @@ unsigned char Input_rs232(signed char par)
 
 /*************************************************************************
 Name: Jmp_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char Jmp_rs232(signed char par)
 {
     PC = 0;
-    if(par >= 0) 
+    if(par >= 0)
     {
         PC = par;
     }
@@ -345,9 +347,9 @@ unsigned char Jmp_rs232(signed char par)
 
 /*************************************************************************
 Name: Step_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char Step_rs232(signed char par)
@@ -368,14 +370,14 @@ unsigned char Step_rs232(signed char par)
 
 /*************************************************************************
 Name: Go_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char Go_rs232(signed char par)
 {
-    if(par >= 0) 
+    if(par >= 0)
     {
         PC = par;
     }
@@ -387,9 +389,9 @@ unsigned char Go_rs232(signed char par)
 
 /*************************************************************************
 Name: AStack_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char AStack_rs232(signed char par)
@@ -414,16 +416,16 @@ unsigned char AStack_rs232(signed char par)
 
 /*************************************************************************
 Name: Mem_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 
     Установки ввода в память программ мк61 на адрес переданный в команде mXX
 *************************************************************************/
 unsigned char Mem_rs232(signed char par)
 {
-    if(par >= 0) 
+    if(par >= 0)
     {
         PC = par;
     }
@@ -439,9 +441,9 @@ unsigned char Mem_rs232(signed char par)
 
 /*************************************************************************
 Name: NextMem_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char NextMem_rs232(signed char par)
@@ -458,9 +460,9 @@ unsigned char NextMem_rs232(signed char par)
 
 /*************************************************************************
 Name: X_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char X_rs232(signed char par)
@@ -483,9 +485,9 @@ unsigned char X_rs232(signed char par)
 
 /*************************************************************************
 Name: MK61_Trace
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_Trace(void)
@@ -496,9 +498,9 @@ void MK61_Trace(void)
 
 /*************************************************************************
 Name: MK61_ToAuto
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_ToAuto(void)
@@ -509,9 +511,9 @@ void MK61_ToAuto(void)
 
 /*************************************************************************
 Name: MK61_ToProg
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_ToProg(void)
@@ -522,9 +524,9 @@ void MK61_ToProg(void)
 
 /*************************************************************************
 Name: MK61_FrmtStore
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_FrmtStore(void)
@@ -534,9 +536,9 @@ void MK61_FrmtStore(void)
 
 /*************************************************************************
 Name: MK61_SaveStore
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_SaveStore(void)
@@ -546,9 +548,9 @@ void MK61_SaveStore(void)
 
 /*************************************************************************
 Name: MK61_LoadStore
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_LoadStore(void)
@@ -558,9 +560,9 @@ void MK61_LoadStore(void)
 
 /*************************************************************************
 Name: MK61_Stop
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_Stop(void)
@@ -571,9 +573,9 @@ void MK61_Stop(void)
 
 /*************************************************************************
 Name: MK61_Start
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_Start(void)
@@ -584,14 +586,14 @@ void MK61_Start(void)
 
 /*************************************************************************
 Name: MK61_FrwdStep
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_FrwdStep(void)
-{ 
-    if(PC<103) 
+{
+    if(PC<103)
     {
         PC++;
     }
@@ -600,14 +602,14 @@ void MK61_FrwdStep(void)
 
 /*************************************************************************
 Name: MK61_BackStep
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_BackStep(void)
-{ 
-    if(PC) 
+{
+    if(PC)
     {
         PC--;
     }
@@ -616,9 +618,9 @@ void MK61_BackStep(void)
 
 /*************************************************************************
 Name: MK61_GoTop
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_GoTop(void)
@@ -629,25 +631,25 @@ void MK61_GoTop(void)
 
 /*************************************************************************
 Name: MK61_CStack_push
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_CStack_push(void)
 {
     register unsigned char *pSP = MK61.pCStack;
- 
+
     //*MK61.pCStack = PC + 1;
     *pSP-- = PC + 1;
 
-/* 
-    if(MK61.pCStack > &MK61.ret[0]) 
+/*
+    if(MK61.pCStack > &MK61.ret[0])
     {
         MK61.pCStack--;
     }
-*/    
-    if(pSP >= &MK61.ret[0]) 
+*/
+    if(pSP >= &MK61.ret[0])
     {
         MK61.pCStack = pSP;
     }
@@ -656,38 +658,38 @@ void MK61_CStack_push(void)
 
 /*************************************************************************
 Name: MK61_CStack_pop
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_CStack_pop(void)
 {
     register unsigned char *pSP = MK61.pCStack;
     PC = *pSP++;
-    
+
     if(pSP <= &MK61.ret[5])
     {
         PC = *pSP;
         MK61.pCStack = pSP;
     }
 
-/*    
-    if(MK61.pCStack < &MK61.ret[5]) 
+/*
+    if(MK61.pCStack < &MK61.ret[5])
     {
         MK61.pCStack++;
     }
- 
+
     PC = *MK61.pCStack;
-*/    
+*/
 }
 
 
 /*************************************************************************
 Name: MK61_AStack_push
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_AStack_push(void)
@@ -700,9 +702,9 @@ void MK61_AStack_push(void)
 
 /*************************************************************************
 Name: MK61_AStack_pop
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_AStack_pop(void)
@@ -715,9 +717,9 @@ void MK61_AStack_pop(void)
 
 /*************************************************************************
 Name: MK61_GetPC
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 unsigned char* MK61_GetPC(void)
@@ -729,9 +731,9 @@ unsigned char* MK61_GetPC(void)
 
 /*************************************************************************
 Name: ExecRS232Stop
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Остановка исполнения при вводе операции из терминала
@@ -753,9 +755,9 @@ void ExecRS232Stop(void)
 
 /*************************************************************************
 Name: OS_STDIN_BREAK
-    
+
 Input:    none
-          
+
 Returns:  none
 
     CallBack на прием с RS232 символа Break
@@ -770,9 +772,9 @@ void OS_STDIN_BREAK(void)
 
 /*************************************************************************
 Name: OS_STDIN_OVERFLOW
-    
+
 Input:    none
-          
+
 Returns:  none
 
     CallBack на переполнение буфера с RS232
@@ -785,25 +787,25 @@ void OS_STDIN_OVERFLOW(void)
 
 /*************************************************************************
 Name: VM61_GetOPCODE
-    
+
 Input:    unsigned char byte
           unsigned char op2
-          
+
 Returns:  none
 
-    Принимает опкод и в зависимости от режима работы - либо исполняет,  
+    Принимает опкод и в зависимости от режима работы - либо исполняет,
     либо размещяет в памяти опкод
 *************************************************************************/
 void VM61_GetOPCODE(unsigned char byte, unsigned char op2)
 {
     OPCODE = byte;
-    
+
     if(MK61.VM61.FLAGS.MODE)        // Режим программировния включен размещаем опкод в памяти
-    { 
+    {
         MK61.prg[PC++] = byte;
-        MK61.VM61.FLAGS.DISP = 1;   // Изменения программы в режиме программирования означают изменения индикации 
+        MK61.VM61.FLAGS.DISP = 1;   // Изменения программы в режиме программирования означают изменения индикации
     }
-    else if(!op2) 
+    else if(!op2)
     {
         VM61_EXEC();
     }
@@ -812,23 +814,23 @@ void VM61_GetOPCODE(unsigned char byte, unsigned char op2)
 
 /*************************************************************************
 Name: VM61_GetOPCODE
-    
+
 Input:    unsigned char byte
-          
+
 Returns:  none
 
-    Принимает операнд и в зависимости от режима работы - либо исполняет, 
+    Принимает операнд и в зависимости от режима работы - либо исполняет,
     либо размещяет в памяти опкод
 *************************************************************************/
 void VM61_GetOPERAND(unsigned char byte)
 {
     TEMP   = byte;
     if(MK61.VM61.FLAGS.MODE)        // Режим программировния включен размещаем операнд в памяти
-    { 
+    {
         MK61.prg[PC++] = byte;
-        MK61.VM61.FLAGS.DISP = 1; // Изменения программы в режиме программирования означают изменения индикации 
+        MK61.VM61.FLAGS.DISP = 1; // Изменения программы в режиме программирования означают изменения индикации
     }
-    else 
+    else
     {
         VM61_EXEC();
     }
@@ -837,9 +839,9 @@ void VM61_GetOPERAND(unsigned char byte)
 
 /*************************************************************************
 Name: VM61_EXEC
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Процедура исполнения VM61 опкода OPCODE и префетча опкода TEMP
@@ -849,30 +851,30 @@ void VM61_EXEC(void)
     register mk61call *ADDR;
     register unsigned char nReg;
     register unsigned long int VAL;
- 
+
     // ---- Подготовка к уходу в VM61  -----
     ADDR =  (mk61call*) ((unsigned int) JMP_TABLE + (unsigned int) OPCODE);
- 
-/*  
-    Если выполнямый опкод не связан с вводом числа и "число закрыто" нужно выполнить преобразование из dispX -> X 
-     потенциально забагованное место 
-        а) при увеличении разрядной сетки в процедурах ввода до 9 знаков из за нежелания при исполнении 
-          возиться с посиком запятой и растягиванием сетки до 9 разрядов, тут тогда надо компенсировать 
+
+/*
+    Если выполнямый опкод не связан с вводом числа и "число закрыто" нужно выполнить преобразование из dispX -> X
+     потенциально забагованное место
+        а) при увеличении разрядной сетки в процедурах ввода до 9 знаков из за нежелания при исполнении
+          возиться с посиком запятой и растягиванием сетки до 9 разрядов, тут тогда надо компенсировать
           этот недочет!
  */
-    if((OPCODE > 0x0A)&&(!MK61.VM61.FLAGS.CLOSEX)) 
+    if((OPCODE > 0x0A)&&(!MK61.VM61.FLAGS.CLOSEX))
     {
         X = strtod(&disp[0],NULL);
     }
-  
+
     // Распознование косвенного обращения к регистру памяти
     if(OPCODE&0x80)
     {
         nReg = OPCODE & 0x0F;                               // выделяем номер регистра
         VAL = (unsigned long int) trunc(MK61.reg[nReg]);    // Обрубим FP
-        
+
         // Если регистр от 0..3 то преддеркмент, если 4..6 то прединкремент
-        if(nReg < 4) 
+        if(nReg < 4)
         {
             VAL--;
         }
@@ -883,10 +885,10 @@ void VM61_EXEC(void)
 
         TEMP = (unsigned char) VAL;     // кешируем для VM61 значение регистра после функции с ним
         MK61.reg[nReg] = (double) VAL;
-        
+
         //!!!!! Постобработка  для приянтия валидного значения для косвенной операции!!!!!
     }
- 
+
     ADDR();
  }
 
@@ -894,20 +896,20 @@ void VM61_EXEC(void)
 
 /*************************************************************************
 Name: OutputLCD_m1
-    
+
 Input:    none
-          
+
 Returns:  none
 
  Подготовка и вывод дисплейного буфера на LCD в режиме программирования МК61
- 
+
  постановка задачи:
  ==================
- 
+
     используя указатель на шаг программы PC формировать шестнадцатеричный дамп из 3 опкодов
     находящихся в памяти программ до PC сопровождая в крайней правой позиции отображением самого PC
     => MK61.prg[PC] MK61.prg[PC-1] MK61.prg[PC-2]  PC
-    
+
     0123456789A
     AA BB CC DD
 
@@ -919,7 +921,7 @@ void OutputLCD_m1(void)
     register uWORD a;
     a.s.lo = *pPRG--;
     a.s.hi = *pPRG--;
-  
+
     __sprintf_P(pBuff, aProgramLine, a, (int) ((PC<<8)|*pPRG));
 
 /* TODO
@@ -930,8 +932,8 @@ void OutputLCD_m1(void)
     pBuff -= 2;
     if(PC == 0) {*--pBuff = ':'; *--pBuff = ':';}
 */
- 
-    // Clear display and home cursor 
+
+    // Clear display and home cursor
     lcd44780_clrscr();
     lcd44780_gotoxy(0, 0);
 
@@ -941,9 +943,9 @@ void OutputLCD_m1(void)
 
 /*************************************************************************
 Name: OutputLCD_m0
-    
+
 Input:    none
-          
+
 Returns:  none
 
  Подготовка и вывод дисплейного буфера на LCD в режиме автоматической работы МК61
@@ -954,9 +956,9 @@ Returns:  none
         8 значащих разрядов + точка (если она есть), после переработки double в строку,
     функция dtostrf подтыкает лидирующие пробелы слева, их надо опустить
     кроме того формат функции dtostrf допускает любое кол-во разрядов до запятой, поэтому строку
-    необходимо временно терминировать на 9 значащей позиции. Есть сложность положение запятой и знака минус- 
+    необходимо временно терминировать на 9 значащей позиции. Есть сложность положение запятой и знака минус-
     литерально значащая позиция и ее надо учитывать.
-    
+
     P.S. Лучше переписать функцию форматирования double чем возиться с этой химерой dtostrf :)
 *************************************************************************/
 void OutputLCD_m0(void)
@@ -964,10 +966,10 @@ void OutputLCD_m0(void)
     // TODO register signed char tmp;
     // TODO    register char *ptmp;
     register char *pdisp;
- 
-    pdisp= &disp[0];        
-  
-    // Clear display and home cursor 
+
+    pdisp= &disp[0];
+
+    // Clear display and home cursor
     lcd44780_clrscr();
     lcd44780_home();
     lcd44780_puts(pdisp);
@@ -976,9 +978,9 @@ void OutputLCD_m0(void)
 
 /*************************************************************************
 Name: MK61_displayed
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void MK61_displayed(void)
@@ -996,7 +998,7 @@ void MK61_displayed(void)
 
     if(MK61.VM61.FLAGS.DISP)
     {
-        if(MK61.VM61.FLAGS.MODE) 
+        if(MK61.VM61.FLAGS.MODE)
         {
             OutputLCD_m1();
         }
@@ -1004,17 +1006,17 @@ void MK61_displayed(void)
         {
             OutputLCD_m0();
         }
-    
+
         MK61.VM61.FLAGS.DISP    = 0;
-    }  
+    }
 }
 
 
 /*************************************************************************
 Name: main
-    
+
 Input:    none
-          
+
 Returns:  int
 
    >>>>>>>>>>>>>>>>> Main function <<<<<<<<<<<<<<<<<<
@@ -1038,17 +1040,17 @@ int main(void)
     {
         asm("cli");
 
-        if(OS.FLAGS.QUANT)              // Реакция на датчик времени 
-        {  	 
+        if(OS.FLAGS.QUANT)              // Реакция на датчик времени
+        {
             TIME_Schedule();
             OS.FLAGS.QUANT = 0;
         }
 
         if(MK61.VM61.FLAGS.STOP | MK61.VM61.FLAGS.DETAILED)
-        { 
+        {
             // Разрешение на отображение действует - если VM61 остановлена, либо включена детализация
             MK61_displayed();
-        } 
+        }
 
 #ifdef MK61_KEYPAD_IN_USE
         if(OS.FLAGS.KEYBRD)
@@ -1057,7 +1059,7 @@ int main(void)
             OS.FLAGS.STDOUT   = 0; // осовбождаем STDOUT поток для последующего вывода
             Keyboard_Scan(); // Снимаем подтверждение нажатия, запускаем сканирование клав.матрицы
         }
-#endif // #ifdef MK61_KEYPAD_IN_USE	
+#endif // #ifdef MK61_KEYPAD_IN_USE
 
         // Если вируальная машина остановилась, проверим команду в буфере UART и исполним ее
         if(MK61.VM61.FLAGS.STOP)
@@ -1067,10 +1069,10 @@ int main(void)
             {
                 // При наличии команды в буфере исполнить ее,
                 // если интерпретатор вернет не NULL то останавливаем VM61
-                if(ExecuteShell(&COMMAND_BUFFER[0])) 
+                if(ExecuteShell(&COMMAND_BUFFER[0]))
                 {
                     ExecRS232Stop();
-                }                       
+                }
             }
         }
 
@@ -1090,7 +1092,7 @@ int main(void)
 
             if(MK61.VM61.FLAGS.STEPBYSTEP)      // Отработаем пошаговый режим
             {
-                ExecRS232Stop();   
+                ExecRS232Stop();
             }
         }
    }
@@ -1149,9 +1151,9 @@ int main(void)
 
 /*************************************************************************
 Name: code_NOP
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void code_NOP(void)
@@ -1164,36 +1166,36 @@ void code_NOP(void)
 
 /*************************************************************************
 Name: code_00_to_09
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.коды от 1 до 9 (цифры ввода числа)
 *************************************************************************/
-void code_00_to_09(void)    
+void code_00_to_09(void)
 {
     // Необходимо протолкнуть стек перед ввводом нового числа
-    if(MK61.VM61.FLAGS.ASTACK_UP) 
+    if(MK61.VM61.FLAGS.ASTACK_UP)
     {
         MK61_AStack_push();
     }
-        
+
     if(MK61.VM61.FLAGS.CLOSEX)
     {
         // Ввод чисел в буфер завершен, очистка буфера
         memset(&disp[0],0,16);
         pPutX = &disp[0];
     }
-    
+
     // ловим ввод за границу сетки  8 - значащих разрядов
-    //  что бы не связываться с исключением запятой из значащих разрядов увеличил до 9, хоть сетка 
+    //  что бы не связываться с исключением запятой из значащих разрядов увеличил до 9, хоть сетка
     // и заканчивается на 8 процедура вывода должна уметь форматировать дисплейный буфер
-    if(pPutX < &disp[LIMIT_NUMERIC]) 
+    if(pPutX < &disp[LIMIT_NUMERIC])
     {
-        *pPutX++ = OPCODE + '0'; 
+        *pPutX++ = OPCODE + '0';
     }
- 
+
     MK61.VM61.FLAGS.ASTACK_UP = 0;
     MK61.VM61.FLAGS.CLOSEX    = 0;
     MK61.VM61.FLAGS.DISP      = 1;
@@ -1202,19 +1204,19 @@ void code_00_to_09(void)
 
 /*************************************************************************
 Name: code_0A
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код десятичный разделитель (ввод числа)
 *************************************************************************/
-void code_0A(void)      
+void code_0A(void)
 {
     // ловим ввод за границу сетки  8 - значащих разрядов
-    //  что бы не связываться с исключением запятой из значащих разрядов увеличил до 9, хоть сетка 
+    //  что бы не связываться с исключением запятой из значащих разрядов увеличил до 9, хоть сетка
     // и заканчивается на 8 процедура вывода должна уметь форматировать дисплейный буфер
-    if(pPutX < &disp[LIMIT_NUMERIC]) 
+    if(pPutX < &disp[LIMIT_NUMERIC])
     {
         *pPutX++ = '.';
     }
@@ -1225,14 +1227,14 @@ void code_0A(void)
 
 /*************************************************************************
 Name: code_0B
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код смены знака числа /-/
 *************************************************************************/
-void code_0B(void)       
+void code_0B(void)
 {
     X = -X;
 
@@ -1243,14 +1245,14 @@ void code_0B(void)
 
 /*************************************************************************
 Name: code_0E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код движение стека вверх (с вершины Х)
 *************************************************************************/
-void code_0E(void)       
+void code_0E(void)
 {
     MK61_AStack_push();
     MK61.VM61.FLAGS.CLOSEX = 1;
@@ -1259,14 +1261,14 @@ void code_0E(void)
 
 /*************************************************************************
 Name: code_0F
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код сдвига стека вверх начиная с X1
 *************************************************************************/
-void code_0F(void)       
+void code_0F(void)
 {
     MK61_AStack_push();
     X = X1;
@@ -1278,14 +1280,14 @@ void code_0F(void)
 
 /*************************************************************************
 Name: code_0D
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Cx очистки X
 *************************************************************************/
-void code_0D(void)       
+void code_0D(void)
 {
     X = 0.00;
     MK61.VM61.FLAGS.REFRESH = 1;
@@ -1295,24 +1297,24 @@ void code_0D(void)
 
 /*************************************************************************
 Name: code_10_13
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код арифметической операции +,-,*,/
 *************************************************************************/
-void code_10_13(void)     
+void code_10_13(void)
 {
     X1 = X;
     switch(OPCODE)
     {
-        case 0x10: Y += X1; break;        
+        case 0x10: Y += X1; break;
         case 0x11: Y -= X1; break;
         case 0x12: Y *= X1; break;
         case 0x13: Y /= X1;
     }
-    
+
     MK61_AStack_pop();
     MK61.VM61.FLAGS.REFRESH = 1;
     MK61.VM61.FLAGS.CLOSEX  = 1;
@@ -1322,14 +1324,14 @@ void code_10_13(void)
 
 /*************************************************************************
 Name: code_14
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код обмен XY
 *************************************************************************/
-void code_14(void)       
+void code_14(void)
 {
     X1 = X;
     X  = Y;
@@ -1342,14 +1344,14 @@ void code_14(void)
 
 /*************************************************************************
 Name: code_15
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код 10^X
 *************************************************************************/
-void code_15(void)       
+void code_15(void)
 {
     X1 = X;
     X  = pow(10,X);
@@ -1361,14 +1363,14 @@ void code_15(void)
 
 /*************************************************************************
 Name: code_16
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код e^X
 *************************************************************************/
-void code_16(void)       
+void code_16(void)
 {
     X1 = X;
     X  = pow(2.718281,X);
@@ -1380,14 +1382,14 @@ void code_16(void)
 
 /*************************************************************************
 Name: code_17
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Lg(X)
 *************************************************************************/
-void code_17(void)       
+void code_17(void)
 {
     X1 = X;
     X  = log10(X);
@@ -1399,14 +1401,14 @@ void code_17(void)
 
 /*************************************************************************
 Name: code_18
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Ln(X)
 *************************************************************************/
-void code_18(void)       
+void code_18(void)
 {
     X1 = X;
     X  = log(X);
@@ -1418,14 +1420,14 @@ void code_18(void)
 
 /*************************************************************************
 Name: code_19
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Arcsin(X)
 *************************************************************************/
-void code_19(void)   
+void code_19(void)
 {
     X1 = X;
     X  = to_R_GR_G(asin(X));
@@ -1437,14 +1439,14 @@ void code_19(void)
 
 /*************************************************************************
 Name: code_1A
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Arccos(X)
 *************************************************************************/
-void code_1A(void)   
+void code_1A(void)
 {
     X1 = X;
     X  = to_R_GR_G(acos(X));
@@ -1456,14 +1458,14 @@ void code_1A(void)
 
 /*************************************************************************
 Name: code_1B
-    
+
 Input:    none
-          
+
 Returns:  none
 
-    Маш.код Arctg(X)    
+    Маш.код Arctg(X)
 *************************************************************************/
-void code_1B(void)       
+void code_1B(void)
 {
     X1 = X;
     X  = to_R_GR_G(atan(X));
@@ -1475,14 +1477,14 @@ void code_1B(void)
 
 /*************************************************************************
 Name: code_1C
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Sin(X)
 *************************************************************************/
-void code_1C(void)       
+void code_1C(void)
 {
     X1 = X;
     X  = sin(from_R_GR_G(X));
@@ -1494,14 +1496,14 @@ void code_1C(void)
 
 /*************************************************************************
 Name: code_1D
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Cos(X)
 *************************************************************************/
-void code_1D(void)       
+void code_1D(void)
 {
     X1 = X;
     X  = cos(from_R_GR_G(X));
@@ -1513,14 +1515,14 @@ void code_1D(void)
 
 /*************************************************************************
 Name: code_1E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код Tg(X)
 *************************************************************************/
-void code_1E(void)       
+void code_1E(void)
 {
     X1 = X;
     X  = tan(from_R_GR_G(X));
@@ -1532,14 +1534,14 @@ void code_1E(void)
 
 /*************************************************************************
 Name: code_20
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код операция извлечения константы - число Pi
 *************************************************************************/
-void code_20(void)       
+void code_20(void)
 {
     // X1  = X;
     MK61_AStack_push();
@@ -1552,14 +1554,14 @@ void code_20(void)
 
 /*************************************************************************
 Name: code_21
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код одноместная операция SQRT(X)
 *************************************************************************/
-void code_21(void)       
+void code_21(void)
 {
     X1  = X;
     X   = sqrt(X);
@@ -1571,14 +1573,14 @@ void code_21(void)
 
 /*************************************************************************
 Name: code_22
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код одноместная операция X^2
 *************************************************************************/
-void code_22(void)       
+void code_22(void)
 {
     X1  = X;
     X   = square(X1);
@@ -1590,14 +1592,14 @@ void code_22(void)
 
 /*************************************************************************
 Name: code_23
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код одноместная операция 1/X
 *************************************************************************/
-void code_23(void)       
+void code_23(void)
 {
     X1  = X;
     X   = 1/X;
@@ -1610,14 +1612,14 @@ void code_23(void)
 
 /*************************************************************************
 Name: code_24
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код двуместная операция X^Y
 *************************************************************************/
-void code_24(void)       
+void code_24(void)
 {
     X1  = X;
     X   = pow(X, Y);
@@ -1629,14 +1631,14 @@ void code_24(void)
 
 /*************************************************************************
 Name: code_25
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код кольцевого движение стека в обратном направлении
 *************************************************************************/
-void code_25(void)       
+void code_25(void)
 {
     X1  = X;
     MK61_AStack_pop();
@@ -1650,14 +1652,14 @@ void code_25(void)
 
 /*************************************************************************
 Name: code_31
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код  модуля числа  |X|
 *************************************************************************/
-void code_31(void)       
+void code_31(void)
 {
     X = fabs(X);
 
@@ -1668,14 +1670,14 @@ void code_31(void)
 
 /*************************************************************************
 Name: code_40_4E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код запись в память П0...ПE
 *************************************************************************/
-void code_40_4E(void)       
+void code_40_4E(void)
 {
     MK61.reg[OPCODE - 0x40] = X;
     MK61.VM61.FLAGS.CLOSEX = 1;
@@ -1685,49 +1687,49 @@ void code_40_4E(void)
 
 /*************************************************************************
 Name: code_50
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код С/П
 *************************************************************************/
-void code_50(void)       
+void code_50(void)
 {
     //X_rs232(0);
     //if(MK61.VM61.FLAGS.STOP)
-    //{ 
+    //{
     //    MK61.VM61.FLAGS.STOP = 0;
     //}
     //return;
-    
+
     ExecRS232Stop();
- 
+
     MK61.VM61.FLAGS.REFRESH = 1;
     MK61.VM61.FLAGS.STOP = 1;
     MK61.VM61.FLAGS.CLOSEX = 1;
     MK61.VM61.FLAGS.ASTACK_UP = 1;
 
-    MK61_displayed(); 
+    MK61_displayed();
 }
 
 
 /*************************************************************************
 Name: code_51
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код БП
 *************************************************************************/
-void code_51(void)       
+void code_51(void)
 {
     PC = TEMP;
-    // Если переход осуществляется в режиме запуска 
+    // Если переход осуществляется в режиме запуска
     // сервис-процедуры (терминальная команда =)
- 
-    if(MK61.VM61.FLAGS.SERVEXEC) 
+
+    if(MK61.VM61.FLAGS.SERVEXEC)
     {
         ExecRS232Stop();
     }
@@ -1740,37 +1742,37 @@ void code_51(void)
 
 /*************************************************************************
 Name: code_52
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код В/0 возврат из подпрограммы
 *************************************************************************/
-void code_52(void)       
+void code_52(void)
 {
-    //if(MK61.VM61.FLAGS.STOP) 
+    //if(MK61.VM61.FLAGS.STOP)
     // PC = 0;                // В режиме останова В/О - устанавливает шаг = 00
-    //else{ 
-    
+    //else{
+
     MK61_CStack_pop();     // В режиме исполнения В/О - возврат из ПП
     MK61.VM61.FLAGS.REFRESH = 1;
     MK61.VM61.FLAGS.CLOSEX = 1;
     MK61.VM61.FLAGS.ASTACK_UP = 1;
-    //} 
+    //}
 }
 
 
 /*************************************************************************
 Name: code_53
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код ПП переход на подпрограмму
 *************************************************************************/
-void code_53(void)       
+void code_53(void)
 {
     MK61_CStack_push();
     PC = TEMP;
@@ -1783,57 +1785,57 @@ void code_53(void)
 
 /*************************************************************************
 Name: code_57_59_5C_5E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код условного перехода
 *************************************************************************/
-void code_57_59_5C_5E(void)       
+void code_57_59_5C_5E(void)
 {
     ALU61.FLAGS.Z = 0;
     ALU61.FLAGS.S = 0;
 
-    if(X==0) 
+    if(X==0)
     {
         ALU61.FLAGS.Z = 1;
     }
-        
-    if(signbit(X)) 
+
+    if(signbit(X))
     {
         ALU61.FLAGS.S = 1;
     }
 
     PC++;
-    
+
     switch(OPCODE)
     {
         case 0x57:                      // X != 0
             if(ALU61.FLAGS.Z)
             {
-                PC = TEMP; 
-            }    
-            break; 
-                
-        case 0x59:                      // X >= 0
-            if(ALU61.FLAGS.S)  
-            {
-                PC = TEMP; 
+                PC = TEMP;
             }
-            break; 
-        
+            break;
+
+        case 0x59:                      // X >= 0
+            if(ALU61.FLAGS.S)
+            {
+                PC = TEMP;
+            }
+            break;
+
         case 0x5C:                      // X < 0
-            if(!ALU61.FLAGS.S) 
+            if(!ALU61.FLAGS.S)
             {
-                PC = TEMP; 
-            }    
-            break; 
-                
+                PC = TEMP;
+            }
+            break;
+
         default:                        // X == 0
-            if(!ALU61.FLAGS.Z) 
+            if(!ALU61.FLAGS.Z)
             {
-                PC = TEMP;        
+                PC = TEMP;
             }
             break;
     }
@@ -1846,14 +1848,14 @@ void code_57_59_5C_5E(void)
 
 /*************************************************************************
 Name: code_58_5A_5B_5D
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код цикла
 *************************************************************************/
-void code_58_5A_5B_5D(void)       
+void code_58_5A_5B_5D(void)
 {
     register double cnt;
     PC++;
@@ -1861,23 +1863,23 @@ void code_58_5A_5B_5D(void)
     // Пересчет в номер регистра 58 - П2, 5A - П3, 5B - П1, 5D - П0
     OPCODE &= 0x03;
     OPCODE ^= 0x02;
-    
-    if(OPCODE == 0) 
+
+    if(OPCODE == 0)
     {
-        OPCODE = 3; 
+        OPCODE = 3;
     }
-    else if(OPCODE == 3) 
+    else if(OPCODE == 3)
     {
         OPCODE = 0;
     }
- 
+
     cnt = MK61.reg[OPCODE] - 1;
- 
+
     if(cnt > 0)
     {
         MK61.reg[OPCODE] = cnt;  // Условие записи в итератор тоже что и условие перехода по циклу
         PC = TEMP;
-    } 
+    }
 
     MK61.VM61.FLAGS.REFRESH = 1;
     MK61.VM61.FLAGS.CLOSEX = 1;
@@ -1887,14 +1889,14 @@ void code_58_5A_5B_5D(void)
 
 /*************************************************************************
 Name: code_60_6E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код чтение из памяти ИП0...ИПE
 *************************************************************************/
-void code_60_6E(void)       
+void code_60_6E(void)
 {
     //X1 = X;
     MK61_AStack_push();
@@ -1908,18 +1910,18 @@ void code_60_6E(void)
 
 /*************************************************************************
 Name: code_70_7E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код условного перехода x!=0 по косвенному адресу КБП0...КБПE
 *************************************************************************/
-void code_70_7E(void)       
+void code_70_7E(void)
 {
     ALU61.FLAGS.Z = 0;
 
-    if(X==0) 
+    if(X==0)
     {
         ALU61.FLAGS.Z = 1;
     }
@@ -1927,7 +1929,7 @@ void code_70_7E(void)
     PC++;
     if(ALU61.FLAGS.Z)               // X != 0
     {
-        PC = TEMP;  
+        PC = TEMP;
     }
 
     MK61.VM61.FLAGS.REFRESH = 1;
@@ -1938,14 +1940,14 @@ void code_70_7E(void)
 
 /*************************************************************************
 Name: code_80_8E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код безусловного перехода по косвенному адресу КБП0...КБПE
 *************************************************************************/
-void code_80_8E(void)       
+void code_80_8E(void)
 {
     PC = TEMP;
 
@@ -1957,18 +1959,18 @@ void code_80_8E(void)
 
 /*************************************************************************
 Name: code_90_9E
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код условного перехода x>=0 по косвенному адресу КБП0...КБПE
 *************************************************************************/
-void code_90_9E(void)       
+void code_90_9E(void)
 {
     ALU61.FLAGS.S = 0;
 
-    if(signbit(X)) 
+    if(signbit(X))
     {
         ALU61.FLAGS.S = 1;
     }
@@ -1976,7 +1978,7 @@ void code_90_9E(void)
     PC++;
     if(ALU61.FLAGS.S)                   // X >= 0
     {
-        PC = TEMP;  
+        PC = TEMP;
     }
 
     MK61.VM61.FLAGS.REFRESH = 1;
@@ -1988,14 +1990,14 @@ void code_90_9E(void)
 
 /*************************************************************************
 Name: code_A0_AE
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код вызова подпрограммы по косвенному адресу КПП0...КППE
 *************************************************************************/
-void code_A0_AE(void)       
+void code_A0_AE(void)
 {
     PC--;                   // Косвенный переход не имеет операнда адреса перехода
     MK61_CStack_push();
@@ -2010,21 +2012,21 @@ void code_A0_AE(void)
 
 /*************************************************************************
 Name: code_B0_BE
-    
+
 Input:    none
-          
+
 Returns:  none
 
     косвенная запись в регистры КП0..КПЕ
 *************************************************************************/
-void code_B0_BE(void)       
+void code_B0_BE(void)
 {
     uVector dt;
-    if(TEMP > LAST_REGISTER) 
+    if(TEMP > LAST_REGISTER)
     {
         dt.val = lrint(X);
     }
-    else 
+    else
     {
         MK61.reg[TEMP] = X;
     }
@@ -2038,18 +2040,18 @@ void code_B0_BE(void)
 
 /*************************************************************************
 Name: code_C0_CE
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код условного перехода x<0 по косвенному адресу КБП0...КБПE
 *************************************************************************/
-void code_C0_CE(void)       
+void code_C0_CE(void)
 {
     ALU61.FLAGS.S = 0;
 
-    if(signbit(X)) 
+    if(signbit(X))
     {
         ALU61.FLAGS.S = 1;
     }
@@ -2057,7 +2059,7 @@ void code_C0_CE(void)
     PC++;
     if(!ALU61.FLAGS.S)              // X < 0
     {
-        PC = TEMP;  
+        PC = TEMP;
     }
 
     MK61.VM61.FLAGS.REFRESH = 1;
@@ -2068,23 +2070,23 @@ void code_C0_CE(void)
 
 /*************************************************************************
 Name: code_D0_DE
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код косвенное чтение из регистров КИП0..КИПЕ
 *************************************************************************/
-void code_D0_DE(void)       
+void code_D0_DE(void)
 {
     //X1 = X;
     MK61_AStack_push();
-    
-    if(TEMP > LAST_REGISTER) 
+
+    if(TEMP > LAST_REGISTER)
     {
         TEMP = 0;
     }
-    
+
     X = MK61.reg[TEMP];
 
     MK61.VM61.FLAGS.REFRESH = 1;
@@ -2095,26 +2097,26 @@ void code_D0_DE(void)
 
 /*************************************************************************
 Name: code_E0_EE
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Маш.код условного перехода x==0 по косвенному адресу КБП0...КБПE
 *************************************************************************/
-void code_E0_EE(void)       
+void code_E0_EE(void)
 {
     ALU61.FLAGS.Z = 0;
 
-    if(X==0) 
+    if(X==0)
     {
         ALU61.FLAGS.Z = 1;
     }
 
-    PC++;    
+    PC++;
     if(!ALU61.FLAGS.Z)              // X == 0
     {
-        PC = TEMP;  
+        PC = TEMP;
     }
 
     MK61.VM61.FLAGS.REFRESH = 1;
@@ -2125,9 +2127,9 @@ void code_E0_EE(void)
 
 /*************************************************************************
 Name: JMP_TABLE
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void JMP_TABLE(void)
@@ -2393,9 +2395,9 @@ void JMP_TABLE(void)
 
 /*************************************************************************
 Name: to_R_GR_G
-    
+
 Input:    double X
-          
+
 Returns:  double
 
     Перевод величин в установленый режим Р-РГ-Г
@@ -2415,9 +2417,9 @@ double to_R_GR_G(double X)
 
 /*************************************************************************
 Name: from_R_GR_G
-    
+
 Input:    double X
-          
+
 Returns:  double
 
     Перевод величин из установленного режима Р-РГ-Г
@@ -2428,7 +2430,7 @@ double from_R_GR_G(double X)
     {
         return (X/180)*3.1415926;
     }
-    else 
+    else
     {
         return X;
     }

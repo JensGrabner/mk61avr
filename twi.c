@@ -1,3 +1,37 @@
+// ***********************************************************
+// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
+// http://code.google.com/p/mk61avr/
+//
+// Получить локальную копию проекта из GIT:
+// git clone https://code.google.com/p/mk61avr/
+//
+// Дискуссия по проекту в Google Groups:
+// http://groups.google.com/group/mk61avr_talks
+//
+// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
+//
+// Module name: twi.c
+//
+// Module description:
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA  02110-1301, USA.
+//
+// ***********************************************************
+//
+
 /*
  * ----------------------------------------------------------------------------
  * "THE BEER-WARE LICENSE" (Revision 42):
@@ -17,7 +51,7 @@
 
 #include <avr/io.h>
 #include <avr/pgmspace.h>
-#include <util/twi.h>		/* Note [1] */
+#include <util/twi.h>       /* Note [1] */
 #include "extlib.h"
 #include "mk61types.h"
 #include "usart_module.h"
@@ -26,18 +60,18 @@
 /*
  * System clock in Hz.
  */
-#define F_CPU 8000000UL	/* Note [2] */
+#define F_CPU 8000000UL /* Note [2] */
 
 /*
  * Note [3]
  * TWI address for 24Cxx EEPROM:
  *
- * 1 0 1 0 E2 E1 E0 R/~W	24C01/24C02
- * 1 0 1 0 E2 E1 A8 R/~W	24C04
- * 1 0 1 0 E2 A9 A8 R/~W	24C08
- * 1 0 1 0 A10 A9 A8 R/~W	24C16
+ * 1 0 1 0 E2 E1 E0 R/~W    24C01/24C02
+ * 1 0 1 0 E2 E1 A8 R/~W    24C04
+ * 1 0 1 0 E2 A9 A8 R/~W    24C08
+ * 1 0 1 0 A10 A9 A8 R/~W   24C16
  */
-#define TWI_SLA_24CXX	0xA0	/* E2 E1 E0 = 0 0 0 */
+#define TWI_SLA_24CXX   0xA0    /* E2 E1 E0 = 0 0 0 */
 
 /*
  * Maximal number of iterations to wait for a device to respond for a
@@ -49,7 +83,7 @@
  * Thus, normal operation should not require more than 100 iterations
  * to get the device to respond to a selection.
  */
-#define MAX_ITER	200
+#define MAX_ITER    200
 
 /*
  * Number of bytes that can be written in a row, see comments for
@@ -82,7 +116,7 @@ void TWI_Init(void)
 #endif
 
 #if F_CPU < 3600000UL
-  TWBR = 10;			/* smallest TWBR value, see note [5] */
+  TWBR = 10;            /* smallest TWBR value, see note [5] */
 #else
   TWBR = (F_CPU / SCL_CLOCK - 16) / 2;
 #endif
@@ -122,61 +156,61 @@ int ee24xx_read_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
   begin:
 
   TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN); // Посылка START условия
-  
+
   while ((TWCR & _BV(TWINT)) == 0) ; /* wait for transmission */
-  
+
   switch ((twst = TW_STATUS))
     {
-    case TW_REP_START:		/* OK, but should not happen */
+    case TW_REP_START:      /* OK, but should not happen */
     case TW_START:
       break;
 
-    case TW_MT_ARB_LOST:	/* Note [9] */
+    case TW_MT_ARB_LOST:    /* Note [9] */
       goto begin;
 
     default:
       return -1; // Отсюда еще можно сбежать поскольку ошибка произошла при посылке START условия и посылка STOP не требуется
-				/* NB: do /not/ send stop condition */
+                /* NB: do /not/ send stop condition */
     }
 
   /* Note [10] */
-  
- /* 
+
+ /*
    Для установки произвольного адреса для последующего чтения, инициализируем операцию записи
-   формируем байт адрес устройства I2C [A0:A2] и бит RW = 1 (TW_WRITE) (send SLA+W) 
+   формируем байт адрес устройства I2C [A0:A2] и бит RW = 1 (TW_WRITE) (send SLA+W)
  */
   TWDR = sla | TW_WRITE;
   TWCR = _BV(TWINT) | _BV(TWEN); /* clear interrupt to start transmission */
-  
+
   while ((TWCR & _BV(TWINT)) == 0) ; /* Ждем завершения передачи */
-  
+
   switch ((twst = TW_STATUS))
     {
     case TW_MT_SLA_ACK:
       break;
 
-    case TW_MT_SLA_NACK:	/* nack during select: device busy writing */
-				/* Note [11] */
+    case TW_MT_SLA_NACK:    /* nack during select: device busy writing */
+                /* Note [11] */
       goto restart;
 
-    case TW_MT_ARB_LOST:	/* re-arbitrate */
+    case TW_MT_ARB_LOST:    /* re-arbitrate */
       goto begin;
 
     default:
-      goto error;		/* must send stop condition */
+      goto error;       /* must send stop condition */
     }
 
-  if(dev.a16){ // Если устройство 16 битное отправим старший байт адреса 
+  if(dev.a16){ // Если устройство 16 битное отправим старший байт адреса
 
-   TWDR = (unsigned char) (eeaddr>>8);		// Старшие 8 бит, остальное маскируем 
+   TWDR = (unsigned char) (eeaddr>>8);      // Старшие 8 бит, остальное маскируем
    TWCR = _BV(TWINT) | _BV(TWEN);            // Продолжаем операции в передачтике TWI
    while ((TWCR & _BV(TWINT)) == 0) ; /* Ожидаем конца передачи */
-  
+
    switch ((twst = TW_STATUS))
      {
      case TW_MT_DATA_ACK:
        break;
-  
+
      case TW_MT_DATA_NACK:
        goto quit;
 
@@ -184,16 +218,16 @@ int ee24xx_read_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
        goto begin;
 
      default:
-       goto error;		/* must send stop condition */
+       goto error;      /* must send stop condition */
      }
   }
-  
+
 /*  Посылаем логический адрес внутри устройства по которому начнем чтение - младшие 8 бит */
-  TWDR = (unsigned char) eeaddr; // вторая часть адреса - младшие 8 бит 
+  TWDR = (unsigned char) eeaddr; // вторая часть адреса - младшие 8 бит
   TWCR = _BV(TWINT) | _BV(TWEN); /* clear interrupt to start transmission */
-  
-  while ((TWCR & _BV(TWINT)) == 0) ; // Ожидаем конца передачи 
-  
+
+  while ((TWCR & _BV(TWINT)) == 0) ; // Ожидаем конца передачи
+
   switch ((twst = TW_STATUS))
     {
     case TW_MT_DATA_ACK:
@@ -206,19 +240,19 @@ int ee24xx_read_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
       goto begin;
 
     default:
-      goto error;		/* must send stop condition */
+      goto error;       /* must send stop condition */
     }
-  
+
   /*
    * Note [12]
    * Next cycle(s): master receiver mode
    */
-  TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);	// Посылка START условия, повторно REP.START
-  while ((TWCR & _BV(TWINT)) == 0);				// Ожидаем конца передачи 
-  
+  TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);   // Посылка START условия, повторно REP.START
+  while ((TWCR & _BV(TWINT)) == 0);             // Ожидаем конца передачи
+
   switch ((twst = TW_STATUS))
     {
-    case TW_START:		/* OK, but should not happen */
+    case TW_START:      /* OK, but should not happen */
     case TW_REP_START:
       break;
 
@@ -232,8 +266,8 @@ int ee24xx_read_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
   // Посылка управляющего байта - теперь уже на чтение, физадрес устройства и RW = 1 (send SLA+R)
   TWDR = sla | TW_READ;
   TWCR = _BV(TWINT) | _BV(TWEN); /* clear interrupt to start transmission */
-  while ((TWCR & _BV(TWINT)) == 0); // Ожидаем конца передачи 
-  
+  while ((TWCR & _BV(TWINT)) == 0); // Ожидаем конца передачи
+
   switch ((twst = TW_STATUS))
     {
     case TW_MR_SLA_ACK:
@@ -253,22 +287,22 @@ int ee24xx_read_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
        len > 0;
        len--)
     {
-      if (len == 1)	twcr = _BV(TWINT) | _BV(TWEN); /* В последнем принятом байте ACK не шлем send NAK this time */
-      TWCR = twcr;		/* clear int to start transmission */
-      while ((TWCR & _BV(TWINT)) == 0); // Ожидаем конца передачи 
+      if (len == 1) twcr = _BV(TWINT) | _BV(TWEN); /* В последнем принятом байте ACK не шлем send NAK this time */
+      TWCR = twcr;      /* clear int to start transmission */
+      while ((TWCR & _BV(TWINT)) == 0); // Ожидаем конца передачи
       switch ((twst = TW_STATUS))
-	{
-	case TW_MR_DATA_NACK:
-	  len = 0;		/* force end of loop */
-	  /* FALLTHROUGH */
-	case TW_MR_DATA_ACK:
-	  *buf++ = TWDR;
-	  rv++;
-	  break;
+    {
+    case TW_MR_DATA_NACK:
+      len = 0;      /* force end of loop */
+      /* FALLTHROUGH */
+    case TW_MR_DATA_ACK:
+      *buf++ = TWDR;
+      rv++;
+      break;
 
-	default:
-	  goto error;
-	}
+    default:
+      goto error;
+    }
     }
   quit:
   /* Note [14] */
@@ -308,7 +342,7 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
 
   /* выделяем физический адрес устройства */
   sla = TWI_SLA_24CXX | (dev.addr << 1);
-  
+
   if (eeaddr + len < (eeaddr | (PAGE_SIZE - 1)))
     endaddr = eeaddr + len;
   else
@@ -325,7 +359,7 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
   while ((TWCR & _BV(TWINT)) == 0) ; /* wait for transmission */
   switch ((twst = TW_STATUS))
     {
-    case TW_REP_START:		/* OK, but should not happen */
+    case TW_REP_START:      /* OK, but should not happen */
     case TW_START:
       break;
 
@@ -333,13 +367,13 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
       goto begin;
 
     default:
-      return -1;		/* error: not in start condition */
-				/* NB: do /not/ send stop condition */
+      return -1;        /* error: not in start condition */
+                /* NB: do /not/ send stop condition */
     }
 
- /* 
+ /*
    Для установки произвольного адреса для последующей записи, инициализируем операцию записи
-   формируем байт адрес устройства I2C [A0:A2] и бит RW = 1 (TW_WRITE) (send SLA+W) 
+   формируем байт адрес устройства I2C [A0:A2] и бит RW = 1 (TW_WRITE) (send SLA+W)
  */
   TWDR = sla | TW_WRITE;
   TWCR = _BV(TWINT) | _BV(TWEN); /* clear interrupt to start transmission */
@@ -349,23 +383,23 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
     case TW_MT_SLA_ACK:
       break;
 
-    case TW_MT_SLA_NACK:	/* nack during select: device busy writing */
+    case TW_MT_SLA_NACK:    /* nack during select: device busy writing */
       goto restart;
 
-    case TW_MT_ARB_LOST:	/* re-arbitrate */
+    case TW_MT_ARB_LOST:    /* re-arbitrate */
       goto begin;
 
     default:
-      goto error;		/* must send stop condition */
+      goto error;       /* must send stop condition */
     }
 
 
 /* Посылаем логический адрес внутри устройства по которому начнем чтение */
  if(dev.a16){ // посылаем старшие 8 бит если они есть
-  
-  TWDR = (unsigned char) (eeaddr>>8);		// Старшие 8 бит
+
+  TWDR = (unsigned char) (eeaddr>>8);       // Старшие 8 бит
   TWCR = _BV(TWINT) | _BV(TWEN); /* clear interrupt to start transmission */
-  
+
   while ((TWCR & _BV(TWINT)) == 0) ; /* wait for transmission */
 
   switch ((twst = TW_STATUS))
@@ -380,18 +414,18 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
       goto begin;
 
     default:
-      goto error;		/* must send stop condition */
+      goto error;       /* must send stop condition */
     }
  }
 /*
   Посылаем логический адрес внутри устройства по которому начнем чтение
   для устройств 24LC32 валиден только адрес в первых 12 битах, второй пакет младшие 8 бит
 */
-  TWDR = (unsigned char) eeaddr;		/* вторая часть адреса - младшие 8 бит */
+  TWDR = (unsigned char) eeaddr;        /* вторая часть адреса - младшие 8 бит */
   TWCR = _BV(TWINT) | _BV(TWEN); /* clear interrupt to start transmission */
-  
+
   while ((TWCR & _BV(TWINT)) == 0) ; /* Ожидаем конца передачи */
-  
+
   switch ((twst = TW_STATUS))
     {
     case TW_MT_DATA_ACK:
@@ -404,7 +438,7 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
       goto begin;
 
     default:
-      goto error;		/* must send stop condition */
+      goto error;       /* must send stop condition */
     }
 
   for (; len > 0; len--)
@@ -413,17 +447,17 @@ int ee24xx_write_page(sE24 dev, unsigned int eeaddr, int len, unsigned char *buf
       TWCR = _BV(TWINT) | _BV(TWEN); /* start transmission */
       while ((TWCR & _BV(TWINT)) == 0) ; /* wait for transmission */
       switch ((twst = TW_STATUS))
-	{
-	case TW_MT_DATA_NACK:
-	  goto error;		/* device write protected -- Note [16] */
+    {
+    case TW_MT_DATA_NACK:
+      goto error;       /* device write protected -- Note [16] */
 
-	case TW_MT_DATA_ACK:
-	  rv++;
-	  break;
+    case TW_MT_DATA_ACK:
+      rv++;
+      break;
 
-	default:
-	  goto error;
-	}
+    default:
+      goto error;
+    }
     }
   quit:
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN); /* send stop condition */
@@ -449,7 +483,7 @@ int ee24xx_write_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *bu
     {
       rv = ee24xx_write_page(dev, eeaddr, len, buf);
       if (rv == -1)
-	return -1;
+    return -1;
       eeaddr += rv;
       len -= rv;
       buf += rv;
@@ -461,8 +495,8 @@ int ee24xx_write_bytes(sE24 dev, unsigned int eeaddr, int len, unsigned char *bu
 }
 
 /*
- Обнаружение и определение размера I2C устройства подключенного к внешней шине I2C 
- по его физическому адресу device_addr. 
+ Обнаружение и определение размера I2C устройства подключенного к внешней шине I2C
+ по его физическому адресу device_addr.
   Результат SIZE:
   0 - устройство с данным адресом не обнаружено.
   >0 - устройство обнаружено объем данных SIZE
@@ -474,12 +508,12 @@ unsigned int ee24xx_check(sE24 dev)
  register unsigned i=0;
 
  if(ee24xx_read_bytes(dev, 15, 1, &data) == -1) return 0;
- 
+
  while(chk_addr != 0){
   if(ee24xx_read_bytes(dev, (chk_addr<<=1) - 1, 1, &data) == -1) break;
   i++;
  };
- 
+
  if(chk_addr > 128) return i; //chk_addr;
  return i;
 }

@@ -1,11 +1,14 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR
+// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
 // http://code.google.com/p/mk61avr/
 //
-// SVN read-only:
-// http://mk61avr.googlecode.com/svn/trunk/ mk61avr-read-only
+// Получить локальную копию проекта из GIT:
+// git clone https://code.google.com/p/mk61avr/
 //
-// Copyright (C) 2009 digitalinvitro, vitasam70
+// Дискуссия по проекту в Google Groups:
+// http://groups.google.com/group/mk61avr_talks
+//
+// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
 // Module name: terminal.c
 //
@@ -23,7 +26,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA  02110-1301, USA.
 //
 // ***********************************************************
 //
@@ -40,7 +44,7 @@
 
 const char aUnknownCmd[] PROGMEM = "\r?cmd?";
 
-cCommand shell[15] PROGMEM = 
+cCommand shell[15] PROGMEM =
 {
     {'t'<<1,Step_rs232},
     {'@'<<1,Regs_rs232},
@@ -65,9 +69,9 @@ char dump[24+24+7];
 
 /*************************************************************************
 Name: Ctrl_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 
     Управление VM61
@@ -78,35 +82,35 @@ unsigned char Ctrl_rs232(signed char par)
     if(par == 1)
     {
         MK61.VM61.FLAGS.R_GRD_G = RADIAN;
-    }    
+    }
     else if(par == 2)
     {
         MK61.VM61.FLAGS.R_GRD_G = DEGREE;
     }
-  
+
 /* else if(par == 3){
   t = ee24xx_check(DEV_STORE);
   if(t<0)
    __sprintf_P(&dump[0], aTWI_ERROR0, twst);
-  else 
+  else
    __sprintf_P(&dump[0], aTWI_CHKI2C, t);
-  
+
   putsram_UART(&dump[0]);
  } */
     else
     {
         MK61.VM61.FLAGS.DETAILED = ~MK61.VM61.FLAGS.DETAILED;
     }
-    
+
     return -1;
 }
 
 
 /*************************************************************************
 Name: Load_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 
     Загрузка программы из терминала по протоколу X-modem
@@ -119,9 +123,9 @@ unsigned char Load_rs232(signed char par)
 
 /*************************************************************************
 Name: Regs_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char Regs_rs232(signed char par)
@@ -140,7 +144,7 @@ unsigned char Regs_rs232(signed char par)
         asm("pop r16");
         dump[4+LIMIT_NUMERIC] = '\r';
         dump[4+LIMIT_NUMERIC+1] = 0x00;
-    
+
         putsram_UART(dump);
     } while(++tmp < 15);
 
@@ -150,9 +154,9 @@ unsigned char Regs_rs232(signed char par)
 
 /*************************************************************************
 Name: CStack_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char CStack_rs232(signed char par)
@@ -168,7 +172,7 @@ unsigned char CStack_rs232(signed char par)
         *pDump++ = HEX(tmp &= 0x0F);
         *pDump++ = (pSt++ == MK61.pCStack)?  '<' : ' ';
     }
-    
+
     *pDump = 0x00;
     putsram_UART(dump);
 
@@ -178,9 +182,9 @@ unsigned char CStack_rs232(signed char par)
 
 /*************************************************************************
 Name: unknown_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char unknown_rs232(signed char par)
@@ -193,9 +197,9 @@ unsigned char unknown_rs232(signed char par)
 
 /*************************************************************************
 Name: dump_rs232
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char dump_rs232(signed char par)
@@ -214,7 +218,7 @@ unsigned char dump_rs232(signed char par)
             *pDump++ = HEX(tmp&=0x0F);
             *pDump++ = (pDumpPRG++ == MK61_GetPC())?  '<' : ' ';
         } while(pDump < &dump[48]);
-        
+
         *pDump++ = '\r';
         *pDump++ = 0x00;
         putsram_UART(dump);
@@ -226,9 +230,9 @@ unsigned char dump_rs232(signed char par)
 
 /*************************************************************************
 Name: SaveFlash
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char SaveFlash(signed char par)
@@ -237,53 +241,53 @@ unsigned char SaveFlash(signed char par)
     {
         int ret = ee24xx_write_bytes(STORE_DEVICE, par<<8, 256, (unsigned char*) &MK61.prg[0]);
 #ifdef DEBUG
-        EEPROM_PutErrorCode(ret); 
+        EEPROM_PutErrorCode(ret);
 #endif
-    } 
+    }
     else
     {
         // Сохраним программу МК61 в EEPROM
         BlockWrEEPROM((unsigned char*) EEPROM_MK61PRG,(unsigned char*) &MK61.prg[0], 105);
-  
+
         // Сохраним регистры памяти в EEPROM
         BlockWrEEPROM((unsigned char*) EEPROM_MK61PRG+105,(unsigned char*) &MK61.reg[0], sizeof(MK61.reg));
     }
- 
+
     return -1;
 }
 
 
 /*************************************************************************
 Name: LoadFlash
-    
+
 Input:    signed char par
-          
+
 Returns:  unsigned char
 *************************************************************************/
 unsigned char LoadFlash(signed char par)
 {
     if(par >= 0)
     {
-        STORE_fread(par);    
-    } 
+        STORE_fread(par);
+    }
     else
     {
         // Считаем программу МК61 в EEPROM
         BlockRdEEPROM((unsigned char*) EEPROM_MK61PRG,(unsigned char*) &MK61.prg[0], 105);
-  
+
         // Считаем регистры памяти в EEPROM
         BlockRdEEPROM((unsigned char*) EEPROM_MK61PRG+105,(unsigned char*) &MK61.reg[0], sizeof(double[15]));
     }
-    
+
     return -1;
 }
 
 
 /*************************************************************************
 Name: SeekCmd
-    
+
 Input:    char SymCmd
-          
+
 Returns:  void*
 *************************************************************************/
 void* SeekCmd(char SymCmd)
@@ -317,9 +321,9 @@ void* SeekCmd(char SymCmd)
 
 /*************************************************************************
 Name: ExecuteShell
-    
+
 Input:    unsigned char *pCmd
-          
+
 Returns:  void*
 
     Исполнить команду pCmd в интерпритаторе команд терминала
@@ -339,11 +343,11 @@ unsigned char ExecuteShell(unsigned char *pCmd)
     }
 
     par = -1;   // Если параметр не задан в командной строке значит он равен -1
-    if(*pCmd) 
+    if(*pCmd)
     {
         par = atoc(pCmd);
     }
-    
+
     return CmdCall(par);
 }
 

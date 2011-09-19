@@ -1,11 +1,14 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR
+// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
 // http://code.google.com/p/mk61avr/
 //
-// SVN read-only:
-// http://mk61avr.googlecode.com/svn/trunk/ mk61avr-read-only
+// Получить локальную копию проекта из GIT:
+// git clone https://code.google.com/p/mk61avr/
 //
-// Copyright (C) 2009 digitalinvitro, vitasam70
+// Дискуссия по проекту в Google Groups:
+// http://groups.google.com/group/mk61avr_talks
+//
+// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
 // Module name: time.c
 //
@@ -23,7 +26,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA  02110-1301, USA.
 //
 // ***********************************************************
 //
@@ -38,9 +42,9 @@ sTimeTask TimeTaskList[MAX_TASK];  // Очередь задач запуска по времени
 
 /*************************************************************************
 Name: TIME_Init
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void TIME_Init(void)
@@ -50,7 +54,7 @@ void TIME_Init(void)
 
     // Каждую задачу списка задач шедуллера установим в EMPTY
     register sTimeTask *pTask = &TimeTaskList[0];
-  
+
     do
     {
         pTask->TimeMark.v[3] = TIME_TASK_EMPTY;
@@ -65,9 +69,9 @@ void TIME_Init(void)
 
 /*************************************************************************
 Name: TIME_Schedule
-    
+
 Input:    none
-          
+
 Returns:  none
 
     Шедулинг задач в очереди
@@ -75,26 +79,26 @@ Returns:  none
 void TIME_Schedule(void)
 {
     register sTimeTask *pTask = &TimeTaskList[0];
- 
+
     do
     {
-        if(pTask->TimeMark.v[3]&(TIME_TASK_SKIP|TIME_TASK_EMPTY)) 
+        if(pTask->TimeMark.v[3]&(TIME_TASK_SKIP|TIME_TASK_EMPTY))
         {
             continue;
         }
-  
+
         if(pTask->uptime <= time)
         {
-            if(pTask->TimeMark.set.kill) 
+            if(pTask->TimeMark.set.kill)
             {
                 pTask->TimeMark.set.skip = 1; // сброс одноразовых задач
             }
-            else 
+            else
             {
                 pTask->uptime = pTask->TimeMark.set.T + time;
             }
-        
-            pTask->call();	// исполним вызов задачи
+
+            pTask->call();  // исполним вызов задачи
         }
     } while(++pTask < &TimeTaskList[MAX_TASK]);
 }
@@ -102,9 +106,9 @@ void TIME_Schedule(void)
 
 /*************************************************************************
 Name: TIME_UpTask
-    
+
 Input:    sTimeTask *pTask
-          
+
 Returns:  none
 *************************************************************************/
 void TIME_UpTask(sTimeTask *pTask)
@@ -116,50 +120,50 @@ void TIME_UpTask(sTimeTask *pTask)
 
 /*************************************************************************
 Name: SeekEmpty
-    
+
 Input:    none
-          
+
 Returns:  sTimeTask*
 *************************************************************************/
 sTimeTask* SeekEmpty(void)
 {
     register sTimeTask *pTask = &TimeTaskList[0];
-    
-    while(!pTask->TimeMark.set.empty) 
+
+    while(!pTask->TimeMark.set.empty)
     {
-        if(++pTask > &TimeTaskList[MAX_TASK]) 
+        if(++pTask > &TimeTaskList[MAX_TASK])
         {
             return 0;
         }
     }
-    
+
     return pTask;
 }
 
 
 /*************************************************************************
 Name: TIME_AppendTask
-    
+
 Input:    TaskCall *tcall
           long int delta
           unsigned char flags
-          
+
 Returns:  sTimeTask*
 *************************************************************************/
 sTimeTask* TIME_AppendTask(TaskCall *tcall, long int delta, unsigned char flags)
 {
     register sTimeTask *pTask = SeekEmpty();
-    
+
     if(pTask)
     {
         pTask->call = tcall;
         pTask->TimeMark.set.T = delta;
-  
+
         //pTask->uptime = time + delta; //pTask->TimeMark.set.T;
         TIME_UpTask(pTask);
         pTask->TimeMark.v[3] = flags;
     }
-    
+
     return pTask;
 }
 

@@ -1,11 +1,14 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR
+// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
 // http://code.google.com/p/mk61avr/
 //
-// SVN read-only:
-// http://mk61avr.googlecode.com/svn/trunk/ mk61avr-read-only
+// Получить локальную копию проекта из GIT:
+// git clone https://code.google.com/p/mk61avr/
 //
-// Copyright (C) 2009 digitalinvitro, vitasam70
+// Дискуссия по проекту в Google Groups:
+// http://groups.google.com/group/mk61avr_talks
+//
+// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
 // Module name: display.c
 //
@@ -23,7 +26,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA  02110-1301, USA.
 //
 // ***********************************************************
 //

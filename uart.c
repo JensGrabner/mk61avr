@@ -1,21 +1,24 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR
+// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
 // http://code.google.com/p/mk61avr/
 //
-// SVN read-only: 
-// http://mk61avr.googlecode.com/svn/trunk/ mk61avr-read-only
-// 
-// Copyright (C) 2009 digitalinvitro, vitasam70
-// 
+// Получить локальную копию проекта из GIT:
+// git clone https://code.google.com/p/mk61avr/
+//
+// Дискуссия по проекту в Google Groups:
+// http://groups.google.com/group/mk61avr_talks
+//
+// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
+//
 // Module name: uart.c
 //
-// Module description: 
+// Module description:
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,7 +26,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+// MA  02110-1301, USA.
 //
 // ***********************************************************
 //
@@ -37,13 +41,13 @@
 char   *pBuff_UART;
 
 
-unsigned char   RxBuffer[16];            	// Приемный буфер символов с UART
-unsigned char   *pRxPut = &RxBuffer[0];  	// Указатель на запись символа в буфер
-unsigned char   *pRxGet = &RxBuffer[0];  	// Указатель на чтение символа из буфера
+unsigned char   RxBuffer[16];               // Приемный буфер символов с UART
+unsigned char   *pRxPut = &RxBuffer[0];     // Указатель на запись символа в буфер
+unsigned char   *pRxGet = &RxBuffer[0];     // Указатель на чтение символа из буфера
 
 const unsigned char BREAK = 0x03;
 const unsigned char EOL   = 0x0D;
-const unsigned char BS	  = 0x08;
+const unsigned char BS    = 0x08;
 const unsigned char SPACE = ' ';
 #define START_RX_BUFFER &RxBuffer[0]
 #define STOP_RX_BUFFER &RxBuffer[15]
@@ -59,7 +63,7 @@ SIGNAL(SIG_UART_DATA)
     if(OS.FLAGS.UARTSRC)
     {
         a = __LPM(pBuff_UART);
-    }    
+    }
     else
     {
         a = *pBuff_UART;
@@ -83,28 +87,28 @@ SIGNAL(SIG_UART_RECV)
     register unsigned char *pLastRxPut;
 
     // Сначало обработаем BREAK
-    if(CHR == BREAK) 
+    if(CHR == BREAK)
     {
-        OS_STDIN_BREAK(); 
+        OS_STDIN_BREAK();
         return;
     }
-    
-    if(!OS.FLAGS.STDOUT) 
+
+    if(!OS.FLAGS.STDOUT)
     {
         UDR = CHR;
     }
- 
+
     if(CHR == BS)
     {
-        // забой - движение назад по буферу с заменой символа на пробел 
-        if(pRxPut != pRxGet) 
+        // забой - движение назад по буферу с заменой символа на пробел
+        if(pRxPut != pRxGet)
         {
-            if(--pRxPut < START_RX_BUFFER) 
+            if(--pRxPut < START_RX_BUFFER)
             {
                 pRxPut = STOP_RX_BUFFER;  // назад по буферу
             }
         }
-            
+
         *pRxPut = SPACE;
     }
     else
@@ -112,12 +116,12 @@ SIGNAL(SIG_UART_RECV)
         // все остальные символы - движение вперед по буферу с записью символа
         *pRxPut = CHR;
         pLastRxPut = pRxPut;
-        
-        if(++pRxPut > STOP_RX_BUFFER) 
+
+        if(++pRxPut > STOP_RX_BUFFER)
         {
             pRxPut = START_RX_BUFFER; // вперед по буферу
         }
-                
+
         if(pRxPut == pRxGet)
         {
             // при совпадении позиции PUT и GET считаем буфер переполненым
@@ -130,9 +134,9 @@ SIGNAL(SIG_UART_RECV)
 
 /*************************************************************************
 Name: RxExtractLine
-    
+
 Input:    unsigned char *buff
-          
+
 Returns:  unsigned char
 
  Функция выделяет линию из буфера UART если таковая в ней присутствует
@@ -150,7 +154,7 @@ unsigned char RxExtractLine(unsigned char *buff)
     register unsigned char *ptr = pRxGet;
     register unsigned char *pDst = buff;
 
-    if(pRxGet == pRxPut) 
+    if(pRxGet == pRxPut)
     {
         return 0; // позиции указателей чтения и записи совпадают - нет символов не то что комманд
     }
@@ -158,26 +162,26 @@ unsigned char RxExtractLine(unsigned char *buff)
     while(*ptr != EOL)
     {
         *pDst++ = *ptr;
-        if(ptr == pRxPut) 
+        if(ptr == pRxPut)
         {
             return 0;  // указетель чтения совпал с указателем записи
         }
-        
-        if(++ptr > STOP_RX_BUFFER) 
+
+        if(++ptr > STOP_RX_BUFFER)
         {
             ptr = START_RX_BUFFER; // вперед по буферу
         }
     }
- 
+
     // Выход в эту строку означает что териматор <EOL> найен и ptr указывает на него
     *ptr   =  0x00;       // знак EOL уничтожается и заменяется на 0x00
     *pDst  =  0x00;
 
-    if(++ptr > STOP_RX_BUFFER) 
+    if(++ptr > STOP_RX_BUFFER)
     {
         ptr = START_RX_BUFFER; // вперед по буферу
     }
- 
+
     pRxGet = ptr;         // позиция чтения из буфера переводится в новую позицию за знак <EOL>
     return -1;
 }
@@ -185,9 +189,9 @@ unsigned char RxExtractLine(unsigned char *buff)
 
 /*************************************************************************
 Name: WaitUART_Ready
-    
+
 Input:    none
-          
+
 Returns:  none
 *************************************************************************/
 void WaitUART_Ready(void)
@@ -208,9 +212,9 @@ void WaitUART_Ready(void)
 
 /*************************************************************************
 Name: putsrom_UART
-    
+
 Input:    char* PROGMEM pPTR
-          
+
 Returns:  none
 *************************************************************************/
 void putsrom_UART(char* PROGMEM pPTR)
@@ -229,9 +233,9 @@ void putsrom_UART(char* PROGMEM pPTR)
 
 /*************************************************************************
 Name: putsram_UART
-    
+
 Input:    char* pPTR
-          
+
 Returns:  none
 *************************************************************************/
 void putsram_UART(char* pPTR)
