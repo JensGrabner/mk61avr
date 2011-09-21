@@ -37,13 +37,15 @@
 #define DEBUG                       //!< Вывод отладочной информации
 
 /* Hardware конфигурационные флаги */
+
 //#define MK61_KEYPAD_IN_USE          //!< Используется клавиатура от МК61
+#define MK52_KEYPAD_IN_USE          //!< Используется клавиатура от МК52 (2 extra keys) 
 
 #define HD44780_LCD_IN_USE          //!< Используется контроллер дисплея HD44780
 //#define KS0073_LCD_IN_USE           //!< Используется контроллер дисплея KS0073
 
-#define LCD_IO_MODE_IN_USE          //!< Используется IO port mode
-//#define LCD_MEM_MAP_MODE_IN_USE     //!< Используется memory mapped mode
+#define LCD_IO_MODE_IN_USE          //!< Используется IO port mode дисплея
+//#define LCD_MEM_MAP_MODE_IN_USE     //!< Используется memory mapped mode дисплея
 
 
 
