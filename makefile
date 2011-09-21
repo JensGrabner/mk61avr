@@ -74,7 +74,7 @@ TARGET = mk61avrCalc
 CURDIR = .
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = mk61avr.c $(CURDIR)/HWL/lcd_HD44780U.c display_hal.c
+SRC = mk61avr.c $(CURDIR)/HWL/lcd_HD44780U.c display_hal.c hardware_hal.c
 #$(TARGET).c
 
 # List C++ source files here. (C dependencies are automatically generated.)

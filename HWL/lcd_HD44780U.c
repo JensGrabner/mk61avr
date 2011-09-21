@@ -10,6 +10,13 @@
 //
 // Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
+// Disclaimer:
+// this code is based on HD44780U LCD library:
+// http://homepage.hispeed.ch/peterfleury/avr-lcd44780.html
+//
+// Author:
+// Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
+//
 // Module name: lcd_HD44780U.c
 //
 // Module description: Модуль алфавитно-цифрового ЖК дисплея на
@@ -37,14 +44,6 @@
 #include <lcd_HD44780U.h>
 #include <config.h>
 
-
-// *****************************************************************************************
-//
-// Disclaimer:
-// this code is based on HD44780U LCD library: http://homepage.hispeed.ch/peterfleury/avr-lcd44780.html
-// Author: Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
-//
-// *****************************************************************************************
 
 /*
 ** constants/macros

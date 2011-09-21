@@ -43,7 +43,10 @@
 #include <string.h>
 #include "config.h"
 #include "display_hal.h"
+#include "hardware_hal.h"
 
+// Данные
+const char mk61avr_ver[] = "MK-61-Avr v.0.1";       //!< Строка версии
 
 
 /*! \fn int8_t main(void)
@@ -62,7 +65,7 @@ int main(void)
     display_clear();
 
     _delay_ms(200);
-    display_puts("MK-61-AVR v.1.0");
+    display_puts(mk61avr_ver);
 
     return err;
 }

@@ -10,6 +10,13 @@
 //
 // Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
+// Disclaimer:
+// this code is based on HD44780U LCD library:
+// http://homepage.hispeed.ch/peterfleury/avr-lcd44780.html
+//
+// Author:
+// Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
+//
 // Module name: lcd_HD44780U.h
 //
 // Module description: Модуль алфавитно-цифрового ЖК дисплея на
@@ -38,16 +45,7 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #include "config.h"
-
-
-// *****************************************************************************************
-//
-// Disclaimer:
-// this code is based on HD44780U LCD library: http://homepage.hispeed.ch/peterfleury/avr-lcd44780.html
-// Author: Peter Fleury <pfleury@gmx.ch>  http://jump.to/fleury
-//
-// *****************************************************************************************
-//
+#include "gpio.h"
 
 /**
  @defgroup pfleury_lcd LCD library
@@ -146,21 +144,22 @@
  *
  */
 
-#define LCD_PORT         PORTC        /**< port for the LCD data lines   */
-#define LCD_DATA0_PORT   LCD_PORT     /**< port for 4bit data bit 0 */
-#define LCD_DATA1_PORT   LCD_PORT     /**< port for 4bit data bit 1 */
-#define LCD_DATA2_PORT   LCD_PORT     /**< port for 4bit data bit 2 */
-#define LCD_DATA3_PORT   LCD_PORT     /**< port for 4bit data bit 3 */
-#define LCD_DATA0_PIN    4            /**< pin for 4bit data bit 0  */
-#define LCD_DATA1_PIN    5            /**< pin for 4bit data bit 1  */
-#define LCD_DATA2_PIN    6            /**< pin for 4bit data bit 2  */
-#define LCD_DATA3_PIN    7            /**< pin for 4bit data bit 3  */
-#define LCD_RS_PORT      PORTD        /**< port for RS line         */
-#define LCD_RS_PIN       5            /**< pin  for RS line         */
-#define LCD_RW_PORT      PORTD        /**< port for RW line         */
-#define LCD_RW_PIN       6            /**< pin  for RW line         */
-#define LCD_E_PORT       PORTD        /**< port for Enable line     */
-#define LCD_E_PIN        7            /**< pin  for Enable line     */
+#define LCD_PORT         LCD_DATA_PORT      /**< port for the LCD data lines   */
+#define LCD_DATA0_PORT   LCD_PORT           /**< port for 4bit data bit 0 */
+#define LCD_DATA1_PORT   LCD_PORT           /**< port for 4bit data bit 1 */
+#define LCD_DATA2_PORT   LCD_PORT           /**< port for 4bit data bit 2 */
+#define LCD_DATA3_PORT   LCD_PORT           /**< port for 4bit data bit 3 */
+#define LCD_DATA0_PIN    LCD_DATA0_4BIT_PIN /**< pin for 4bit data bit 0  */
+#define LCD_DATA1_PIN    LCD_DATA1_4BIT_PIN /**< pin for 4bit data bit 1  */
+#define LCD_DATA2_PIN    LCD_DATA2_4BIT_PIN /**< pin for 4bit data bit 2  */
+#define LCD_DATA3_PIN    LCD_DATA3_4BIT_PIN /**< pin for 4bit data bit 3  */
+#define LCD_RS_PORT      LCD_CTRL_PORT      /**< port for RS line         */
+#define LCD_RS_PIN       LCD_RS_CTRL_PIN    /**< pin  for RS line         */
+#define LCD_RW_PORT      LCD_CTRL_PORT      /**< port for RW line         */
+#define LCD_RW_PIN       LCD_RW_CTRL_PIN    /**< pin  for RW line         */
+#define LCD_E_PORT       LCD_CTRL_PORT      /**< port for Enable line     */
+#define LCD_E_PIN        LCD_E_CTRL_PIN     /**< pin  for Enable line     */
+
 
 #elif defined(__AVR_AT90S4414__) || defined(__AVR_AT90S8515__) || defined(__AVR_ATmega64__) || \
       defined(__AVR_ATmega8515__)|| defined(__AVR_ATmega103__) || defined(__AVR_ATmega128__) || \
