@@ -38,15 +38,20 @@
 
 /* Hardware конфигурационные флаги */
 
+// Флаги клавиатуры
 //#define MK61_KEYPAD_IN_USE          //!< Используется клавиатура от МК61
-#define MK52_KEYPAD_IN_USE          //!< Используется клавиатура от МК52 (2 extra keys) 
+#define MK52_KEYPAD_IN_USE          //!< Используется клавиатура от МК52 (2 extra keys)
 
+// Флаги дисплея
 #define HD44780_LCD_IN_USE          //!< Используется контроллер дисплея HD44780
 //#define KS0073_LCD_IN_USE           //!< Используется контроллер дисплея KS0073
-
 #define LCD_IO_MODE_IN_USE          //!< Используется IO port mode дисплея
 //#define LCD_MEM_MAP_MODE_IN_USE     //!< Используется memory mapped mode дисплея
 
+// Флаги UART-а
+#define UART_IN_USE                 //!< UART функциональность добавлена
+//#define UART_INT_MODE               //!< UART в режиме прерывания
+#define UART_POLL_MODE              //!< UART в polling режиме
 
 
 #endif // _CONFIG_H_
