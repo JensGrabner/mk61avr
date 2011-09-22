@@ -1,18 +1,18 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
+// Project: Р­РјСѓР»СЏС‚РѕСЂ РїСЂРѕРіСЂР°РјРјРёСЂСѓРµРјРѕРіРѕ РєР°Р»СЊРєСѓР»СЏС‚РѕСЂР° РњРљ-61 РЅР° AVR:
 // http://code.google.com/p/mk61avr/
 //
-// Получить локальную копию проекта из GIT репозитория:
+// РџРѕР»СѓС‡РёС‚СЊ Р»РѕРєР°Р»СЊРЅСѓСЋ РєРѕРїРёСЋ РїСЂРѕРµРєС‚Р° РёР· GIT СЂРµРїРѕР·РёС‚РѕСЂРёСЏ:
 // git clone https://code.google.com/p/mk61avr/
 //
-// Дискуссия по проекту в Google Groups:
+// Р”РёСЃРєСѓСЃСЃРёСЏ РїРѕ РїСЂРѕРµРєС‚Сѓ РІ Google Groups:
 // http://groups.google.com/group/mk61avr_talks
 //
-// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
+// Copyright (C) 2009-2011 РђР»РµРєСЃРµР№ РЎСѓРіРѕРЅСЏРµРІ, Р’РёС‚Р°Р»РёР№ РЎР°РјСѓСЂРѕРІ
 //
 // Module name: uart_hwl.h
 //
-// Module description: Низкоуровневая UART функциональность
+// Module description: РќРёР·РєРѕСѓСЂРѕРІРЅРµРІР°СЏ UART С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕСЃС‚СЊ
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,7 +48,7 @@
 
 #ifdef UART_IN_USE
 
-// Прототипы функций
+// РџСЂРѕС‚РѕС‚РёРїС‹ С„СѓРЅРєС†РёР№
 void USART0_Init(uint32_t aBaudrate);
 
 

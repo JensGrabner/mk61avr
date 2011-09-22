@@ -1,18 +1,18 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
+// Project: Р­РјСѓР»СЏС‚РѕСЂ РїСЂРѕРіСЂР°РјРјРёСЂСѓРµРјРѕРіРѕ РєР°Р»СЊРєСѓР»СЏС‚РѕСЂР° РњРљ-61 РЅР° AVR:
 // http://code.google.com/p/mk61avr/
 //
-// Получить локальную копию проекта из GIT репозитория:
+// РџРѕР»СѓС‡РёС‚СЊ Р»РѕРєР°Р»СЊРЅСѓСЋ РєРѕРїРёСЋ РїСЂРѕРµРєС‚Р° РёР· GIT СЂРµРїРѕР·РёС‚РѕСЂРёСЏ:
 // git clone https://code.google.com/p/mk61avr/
 //
-// Дискуссия по проекту в Google Groups:
+// Р”РёСЃРєСѓСЃСЃРёСЏ РїРѕ РїСЂРѕРµРєС‚Сѓ РІ Google Groups:
 // http://groups.google.com/group/mk61avr_talks
 //
-// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
+// Copyright (C) 2009-2011 РђР»РµРєСЃРµР№ РЎСѓРіРѕРЅСЏРµРІ, Р’РёС‚Р°Р»РёР№ РЎР°РјСѓСЂРѕРІ
 //
 // Module name: config.h
 //
-// Module description: Конфигурационный файл проекта
+// Module description: РљРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Р№ С„Р°Р№Р» РїСЂРѕРµРєС‚Р°
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,24 +34,24 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#define DEBUG                       //!< Вывод отладочной информации
+#define DEBUG                       //!< Р’С‹РІРѕРґ РѕС‚Р»Р°РґРѕС‡РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё
 
-/* Hardware конфигурационные флаги */
+/* Hardware РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅС‹Рµ С„Р»Р°РіРё */
 
-// Флаги клавиатуры
-//#define MK61_KEYPAD_IN_USE          //!< Используется клавиатура от МК61
-#define MK52_KEYPAD_IN_USE          //!< Используется клавиатура от МК52 (2 extra keys)
+// Р¤Р»Р°РіРё РєР»Р°РІРёР°С‚СѓСЂС‹
+//#define MK61_KEYPAD_IN_USE          //!< РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєР»Р°РІРёР°С‚СѓСЂР° РѕС‚ РњРљ61
+#define MK52_KEYPAD_IN_USE          //!< РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєР»Р°РІРёР°С‚СѓСЂР° РѕС‚ РњРљ52 (2 extra keys)
 
-// Флаги дисплея
-#define HD44780_LCD_IN_USE          //!< Используется контроллер дисплея HD44780
-//#define KS0073_LCD_IN_USE           //!< Используется контроллер дисплея KS0073
-#define LCD_IO_MODE_IN_USE          //!< Используется IO port mode дисплея
-//#define LCD_MEM_MAP_MODE_IN_USE     //!< Используется memory mapped mode дисплея
+// Р¤Р»Р°РіРё РґРёСЃРїР»РµСЏ
+#define HD44780_LCD_IN_USE          //!< РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєРѕРЅС‚СЂРѕР»Р»РµСЂ РґРёСЃРїР»РµСЏ HD44780
+//#define KS0073_LCD_IN_USE           //!< РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєРѕРЅС‚СЂРѕР»Р»РµСЂ РґРёСЃРїР»РµСЏ KS0073
+#define LCD_IO_MODE_IN_USE          //!< РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ IO port mode РґРёСЃРїР»РµСЏ
+//#define LCD_MEM_MAP_MODE_IN_USE     //!< РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ memory mapped mode РґРёСЃРїР»РµСЏ
 
-// Флаги UART-а
-#define UART_IN_USE                 //!< UART функциональность добавлена
-//#define UART_INT_MODE               //!< UART в режиме прерывания
-#define UART_POLL_MODE              //!< UART в polling режиме
+// Р¤Р»Р°РіРё UART-Р°
+#define UART_IN_USE                 //!< UART С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕСЃС‚СЊ РґРѕР±Р°РІР»РµРЅР°
+//#define UART_INT_MODE               //!< UART РІ СЂРµР¶РёРјРµ РїСЂРµСЂС‹РІР°РЅРёСЏ
+#define UART_POLL_MODE              //!< UART РІ polling СЂРµР¶РёРјРµ
 
 
 #endif // _CONFIG_H_

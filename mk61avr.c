@@ -1,18 +1,18 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на AVR:
+// Project: Р­РјСѓР»СЏС‚РѕСЂ РїСЂРѕРіСЂР°РјРјРёСЂСѓРµРјРѕРіРѕ РєР°Р»СЊРєСѓР»СЏС‚РѕСЂР° РњРљ-61 РЅР° AVR:
 // http://code.google.com/p/mk61avr/
 //
-// Получить локальную копию проекта из GIT репозитория:
+// РџРѕР»СѓС‡РёС‚СЊ Р»РѕРєР°Р»СЊРЅСѓСЋ РєРѕРїРёСЋ РїСЂРѕРµРєС‚Р° РёР· GIT СЂРµРїРѕР·РёС‚РѕСЂРёСЏ:
 // git clone https://code.google.com/p/mk61avr/
 //
-// Дискуссия по проекту в Google Groups:
+// Р”РёСЃРєСѓСЃСЃРёСЏ РїРѕ РїСЂРѕРµРєС‚Сѓ РІ Google Groups:
 // http://groups.google.com/group/mk61avr_talks
 //
-// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
+// Copyright (C) 2009-2011 РђР»РµРєСЃРµР№ РЎСѓРіРѕРЅСЏРµРІ, Р’РёС‚Р°Р»РёР№ РЎР°РјСѓСЂРѕРІ
 //
 // Module name: mk61avr.c
 //
-// Module description: Main-файл проекта
+// Module description: Main-С„Р°Р№Р» РїСЂРѕРµРєС‚Р°
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,14 +47,14 @@
 #include "uart_hal.h"
 
 
-// Данные
-const char mk61avr_ver[] = "MK-61-Avr v.0.1";       //!< Строка версии
+// Р”Р°РЅРЅС‹Рµ
+const char mk61avr_ver[] = "MK-61-Avr v.0.1";       //!< РЎС‚СЂРѕРєР° РІРµСЂСЃРёРё
 
 
 /*! \fn int8_t main(void)
-    \brief Main-функция проекта.
+    \brief Main-С„СѓРЅРєС†РёСЏ РїСЂРѕРµРєС‚Р°.
     \param void.
-    \return Код ошибки.
+    \return РљРѕРґ РѕС€РёР±РєРё.
 */
 int main(void)
 {
@@ -62,7 +62,7 @@ int main(void)
 
     _delay_ms(200);
 
-    // Инициализиовать дисплей
+    // РРЅРёС†РёР°Р»РёР·РёРѕРІР°С‚СЊ РґРёСЃРїР»РµР№
     display_init((uint8_t)E_LcdDisp_ON);
     display_clear();
 
