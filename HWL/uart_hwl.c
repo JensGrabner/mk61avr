@@ -1,18 +1,18 @@
 // ***********************************************************
-// Project: Эмулятор программируемого калькулятора МК-61 на Atmel AVR:
+// Project: Р­РјСѓР»СЏС‚РѕСЂ РїСЂРѕРіСЂР°РјРјРёСЂСѓРµРјРѕРіРѕ РєР°Р»СЊРєСѓР»СЏС‚РѕСЂР° РњРљ-61 РЅР° Atmel AVR:
 // http://code.google.com/p/mk61avr/
 //
-// Получить локальную копию проекта из GIT репозитория:
+// РџРѕР»СѓС‡РёС‚СЊ Р»РѕРєР°Р»СЊРЅСѓСЋ РєРѕРїРёСЋ РїСЂРѕРµРєС‚Р° РёР· GIT СЂРµРїРѕР·РёС‚РѕСЂРёСЏ:
 // git clone https://code.google.com/p/mk61avr/
 //
-// Дискуссия по проекту в Google Groups:
+// Р”РёСЃРєСѓСЃСЃРёСЏ РїРѕ РїСЂРѕРµРєС‚Сѓ РІ Google Groups:
 // http://groups.google.com/group/mk61avr_talks
 //
-// Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
+// Copyright (C) 2009-2011 РђР»РµРєСЃРµР№ РЎСѓРіРѕРЅСЏРµРІ, Р’РёС‚Р°Р»РёР№ РЎР°РјСѓСЂРѕРІ
 //
 // Module name: uart_hwl.c
 //
-// Module description: Низкоуровневая UART функциональность
+// Module description: РќРёР·РєРѕСѓСЂРѕРІРЅРµРІР°СЏ UART С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕСЃС‚СЊ
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,22 +42,22 @@
 #ifdef UART_IN_USE
 
 /*! \fn void USART0_Init(uint32_t aBaudrate)
-    \brief Инициализирует UART.
-    \param Скорость порта.
+    \brief РРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ UART.
+    \param РЎРєРѕСЂРѕСЃС‚СЊ РїРѕСЂС‚Р°.
     \return none.
 */
 void USART0_Init(uint32_t aBaudrate)
 {
-    //// Установить скорость UART-а
+    //// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРєРѕСЂРѕСЃС‚СЊ UART-Р°
     //UBRR0H = (uint8_t) (aBaudrate >> 8);
     //UBRR0L = (uint8_t) aBaudrate;
 
-    //// Включить UART приемник и передатчик
+    //// Р’РєР»СЋС‡РёС‚СЊ UART РїСЂРёРµРјРЅРёРє Рё РїРµСЂРµРґР°С‚С‡РёРє
     //UCSR0B = ( ( 1 << RXEN0 ) | ( 1 << TXEN0 ) );
 
-    //// Установить формат фрейма: 8 data 2stop */
-    //UCSR0C = (1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);                //!< Для Extended IO устройств
-    ////UCSR0C = (1<<URSEL)|(1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);   //!< Для устройств без Extended IO
+    //// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ С„РѕСЂРјР°С‚ С„СЂРµР№РјР°: 8 data 2stop */
+    //UCSR0C = (1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);                //!< Р”Р»СЏ Extended IO СѓСЃС‚СЂРѕР№СЃС‚РІ
+    ////UCSR0C = (1<<URSEL)|(1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);   //!< Р”Р»СЏ СѓСЃС‚СЂРѕР№СЃС‚РІ Р±РµР· Extended IO
 }
 
 
