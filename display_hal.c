@@ -12,7 +12,7 @@
 //
 // Module name: display_hal.c
 //
-// Module description: Display Harware Abstraction Layer
+// Module description: Display Hardware Abstraction Layer
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,9 +35,6 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #include "config.h"
-#if defined (HD44780_LCD_IN_USE) || defined (KS0073_LCD_IN_USE)
-#include <lcd_HD44780U.h>
-#endif // #if defined (HD44780_LCD_IN_USE) || defined (KS0073_LCD_IN_USE)
 #include "display_hal.h"
 
 

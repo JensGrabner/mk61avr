@@ -44,8 +44,9 @@
 #include "config.h"
 #include "display_hal.h"
 #include "hardware_hal.h"
+#ifdef UART_IN_USE
 #include "uart_hal.h"
-
+#endif // UART_IN_USE
 
 // Данные
 const char mk61avr_ver[] = "MK-61-Avr v.0.1";       //!< Строка версии
@@ -62,12 +63,23 @@ int main(void)
 
     _delay_ms(200);
 
+// *************************** TODO **********************************
     // Инициализиовать дисплей
     display_init((uint8_t)E_LcdDisp_ON);
     display_clear();
 
     _delay_ms(200);
     display_puts(mk61avr_ver);
+
+#ifdef UART_IN_USE
+    // Инициализиовать UART порт
+    uart_init();
+
+    _delay_ms(200);
+    uart_new_line();
+    uart_send_string(mk61avr_ver);
+#endif // #ifdef UART_IN_USE
+// *************************** TODO **********************************
 
     return err;
 }

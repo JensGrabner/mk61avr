@@ -31,35 +31,91 @@
 //
 // ***********************************************************
 //
-#include <avr/io.h>
-#include <inttypes.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <util/delay.h>
+#include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <inttypes.h>
+#include <util/delay.h>
 #include "config.h"
+#ifdef UART_IN_USE
+#include <util/setbaud.h>
 #include "uart_hwl.h"
+#endif // UART_IN_USE
 
 #ifdef UART_IN_USE
 
-/*! \fn void USART0_Init(uint32_t aBaudrate)
-    \brief Инициализирует UART.
-    \param Скорость порта.
-    \return none.
+#ifdef UART_POLL_MODE
+/*! \fn void uart_poll_init(void)
+    \brief Инициализирует UART порт.
+    \param Нет.
+    \return Нет.
 */
-void USART0_Init(uint32_t aBaudrate)
+void uart_poll_init(void)
 {
-    //// Установить скорость UART-а
-    //UBRR0H = (uint8_t) (aBaudrate >> 8);
-    //UBRR0L = (uint8_t) aBaudrate;
+    // Установить скорость UART-а
+   UBRRH = UBRRH_VALUE;
+   UBRRL = UBRRL_VALUE;
+#if USE_2X
+   UCSRA |= (1 << U2X);
+#else
+   UCSRA &= ~(1 << U2X);
+#endif
 
-    //// Включить UART приемник и передатчик
-    //UCSR0B = ( ( 1 << RXEN0 ) | ( 1 << TXEN0 ) );
+    // Установить формат фрейма: асинхронный режим, нет проверки четности,
+    // 1 стоп-бит, 8 бит
+    UCSRC = (1 << URSEL) | (0 << UMSEL) | (0 << UPM1) | (0 << UPM0)|
+(0 << USBS) | (0 << UCSZ2) | (1 << UCSZ1) | (1 << UCSZ0);
 
-    //// Установить формат фрейма: 8 data 2stop */
-    //UCSR0C = (1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);                //!< Для Extended IO устройств
-    ////UCSR0C = (1<<URSEL)|(1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);   //!< Для устройств без Extended IO
+    // Включить UART приемник и передатчик
+    UCSRB = (1 << RXEN) | (1 << TXEN);
 }
 
+
+/*! \fn void uart_poll_send_byte(uint8_t aDataByte)
+    \brief Отправляет байт в UART порт.
+    \param Байт для передачи.
+    \return none.
+*/
+void uart_poll_send_byte(uint8_t aDataByte)
+{
+    // Wait byte to be transmitted
+    while((UCSRA & (1 << UDRE)) == 0);
+
+    UDR = aDataByte;
+}
+
+
+/*! \fn void uart_poll_send_string(const char *aDataString)
+    \brief Отправляет строку символов в UART порт.
+    \param Указатель на строку символов.
+    \return Нет.
+*/
+void uart_poll_send_string(const char *aDataString)
+{
+    // До тех пор, пока строка не пустая
+    while (*aDataString)
+    {
+        uart_poll_send_byte(*aDataString);
+        aDataString++;
+    }
+}
+
+
+/*! \fn uint8_t uart_poll_receive_byte(void)
+    \brief Принимает байт из UART порта.
+    \param Нет.
+    \return Принятый байт.
+*/
+uint8_t uart_poll_receive_byte(void)
+{
+    // Ждем, пока не придет байт
+    while((UCSRA & (1 << RXC)) == 0);
+
+    return UDR;
+}
+
+#endif // UART_POLL_MODE
 
 #endif // UART_IN_USE
 

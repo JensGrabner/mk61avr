@@ -34,12 +34,22 @@
 #ifndef _UART_HAL_H_
 #define _UART_HAL_H_
 
+#ifdef UART_IN_USE
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #include "config.h"
 #include <uart_hwl.h>
 
+// Прототипы функций
 
+void uart_init(void);
+void uart_send_byte(uint8_t aDataByte);
+void uart_send_string(const char *aDataString);
+uint8_t uart_receive_byte(void);
+void uart_new_line(void);
+
+#endif // UART_IN_USE
 
 #endif // _UART_HAL_H_
+

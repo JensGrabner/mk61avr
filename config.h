@@ -52,6 +52,7 @@
 #define UART_IN_USE                 //!< UART функциональность добавлена
 //#define UART_INT_MODE               //!< UART в режиме прерывания
 #define UART_POLL_MODE              //!< UART в polling режиме
+#define BAUD                        38400UL  //!< Скорость UART порта
 
 
 #endif // _CONFIG_H_

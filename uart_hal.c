@@ -10,9 +10,9 @@
 //
 // Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
-// Module name: uart_hwl.h
+// Module name: uart_hal.c
 //
-// Module description: Низкоуровневая UART функциональность
+// Module description: UART Hardware Abstraction Layer
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,34 +31,81 @@
 //
 // ***********************************************************
 //
-#ifndef _UART_HWL_H_
-#define _UART_HWL_H_
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #include "config.h"
+#ifdef UART_IN_USE
+#include "uart_hal.h"
+#endif // #ifdef UART_IN_USE
+
 
 #ifdef UART_IN_USE
-#ifdef UART_INT_MODE
+/*! \fn void uart_init(uint32_t aBaudrate)
+    \brief Инициализирует UART порт (аппаратно-независимо).
+    \param Нет.
+    \return Нет.
+*/
+void uart_init()
+{
 #ifdef UART_POLL_MODE
-#error Only one type of UART mode must be defined in config.h!
+    uart_poll_init();
 #endif // UART_POLL_MODE
+}
+
+
+/*! \fn void uart_send_byte(uint8_t aDataByte)
+    \brief Отправляет байт в UART порт (аппаратно-независимо).
+    \param Байт для передачи.
+    \return Нет.
+*/
+void uart_send_byte(uint8_t aDataByte)
+{
+#ifdef UART_POLL_MODE
+    uart_poll_send_byte(aDataByte);
 #endif // UART_POLL_MODE
+}
+
+
+/*! \fn void uart_send_string(const char *aDataString)
+    \brief Отправляет строку символов в UART порт (аппаратно-независимо).
+    \param Указатель на строку символов.
+    \return Нет.
+*/
+void uart_send_string(const char *aDataString)
+{
+#ifdef UART_POLL_MODE
+    uart_poll_send_string(aDataString);
+#endif // UART_POLL_MODE
+}
+
+
+/*! \fn uint8_t uart_receive_byte(void)
+    \brief Принимает байт из UART порта (аппаратно-независимо).
+    \param Нет.
+    \return Принятый байт.
+*/
+uint8_t uart_receive_byte(void)
+{
+#ifdef UART_POLL_MODE
+    return (uart_poll_receive_byte());
+#endif // UART_POLL_MODE
+}
+
+
+/*! \fn void uart_new_line(void)
+    \brief Посылает символ новой строки в UART порт.
+    \param Нет.
+    \return Нет.
+*/
+void uart_new_line(void)
+{
+    uart_send_string("\r\n");
+}
+
 #endif // UART_IN_USE
 
-#ifdef UART_IN_USE
 
-// Прототипы функций
 
-#ifdef UART_POLL_MODE
-void uart_poll_init(void);
-void uart_poll_send_byte(uint8_t aDataByte);
-void uart_poll_send_string(const char *aDataString);
-uint8_t uart_poll_receive_byte(void);
-void uart_poll_new_line(void);
-#endif // UART_POLL_MODE
 
-#endif // UART_IN_USE
-
-#endif // _UART_HWL_H_
 

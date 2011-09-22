@@ -76,7 +76,7 @@ HWLDIR = $(CURDIR)/HWL
 OSDIR  = $(CURDIR)/OS
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = mk61avr.c $(HWLDIR)/lcd_HD44780U.c $(HWLDIR)/uart_hwl.c display_hal.c hardware_hal.c
+SRC = mk61avr.c $(HWLDIR)/lcd_HD44780U.c $(HWLDIR)/uart_hwl.c display_hal.c hardware_hal.c uart_hal.c
 #$(TARGET).c
 
 # List C++ source files here. (C dependencies are automatically generated.)
