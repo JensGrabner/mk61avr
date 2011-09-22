@@ -44,6 +44,8 @@
 #include "config.h"
 #include "display_hal.h"
 #include "hardware_hal.h"
+#include "uart_hal.h"
+
 
 // Данные
 const char mk61avr_ver[] = "MK-61-Avr v.0.1";       //!< Строка версии

@@ -12,7 +12,7 @@
 //
 // Module name: hardware_hal.c
 //
-// Module description: Generic Harware Abstraction Layer
+// Module description: Generic Hardware Abstraction Layer
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

@@ -72,9 +72,10 @@ TARGET = mk61avrCalc
 #     To put object files in current directory, use a dot (.), do NOT make
 #     this an empty or blank macro!
 CURDIR = .
+HWLDIR = $(CURDIR)/HWL
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = mk61avr.c $(CURDIR)/HWL/lcd_HD44780U.c display_hal.c hardware_hal.c
+SRC = mk61avr.c $(HWLDIR)/lcd_HD44780U.c $(HWLDIR)/uart_hwl.c display_hal.c hardware_hal.c
 #$(TARGET).c
 
 # List C++ source files here. (C dependencies are automatically generated.)

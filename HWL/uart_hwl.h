@@ -10,9 +10,9 @@
 //
 // Copyright (C) 2009-2011 Алексей Сугоняев, Виталий Самуров
 //
-// Module name: gpio.h
+// Module name: uart_hwl.h
 //
-// Module description: Конфигурация GPIO микроконтролллера
+// Module description: Низкоуровневая UART функциональность
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,29 +31,28 @@
 //
 // ***********************************************************
 //
-#ifndef _GPIO_H_
-#define _GPIO_H_
+#ifndef _UART_HWL_H_
+#define _UART_HWL_H_
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #include "config.h"
 
-/* Конфигурация портов
-   ввода-вывода
-*/
+#ifdef UART_IN_USE
+#ifdef UART_INT_MODE
+#ifdef UART_POLL_MODE
+#error Only one type of UART mode must be defined in config.h!
+#endif // UART_POLL_MODE
+#endif // UART_POLL_MODE
+#endif // UART_IN_USE
 
-// Порты дисплея
-#define LCD_DATA_PORT           PORTC   //!< Порт, куда подключены линии данных дисплея
-#define LCD_CTRL_PORT           PORTD   //!< Порт, куда подключены линии управления дисплея
-#define LCD_DATA0_4BIT_PIN      4       //!< пин для бита 0 порта данных дисплея
-#define LCD_DATA1_4BIT_PIN      5       //!< пин для бита 1 порта данных дисплея
-#define LCD_DATA2_4BIT_PIN      6       //!< пин для бита 2 порта данных дисплея
-#define LCD_DATA3_4BIT_PIN      7       //!< пин для бита 3 порта данных дисплея
-#define LCD_RS_CTRL_PIN         5       //!< пин для RS порта контроля дисплея
-#define LCD_RW_CTRL_PIN         6       //!< пин для RW порта контроля дисплея
-#define LCD_E_CTRL_PIN          7       //!< пин для E порта контроля дисплея
+#ifdef UART_IN_USE
+
+// Прототипы функций
+void USART0_Init(uint32_t aBaudrate);
 
 
+#endif // UART_IN_USE
 
+#endif // _UART_HWL_H_
 
-#endif // _GPIO_H_
