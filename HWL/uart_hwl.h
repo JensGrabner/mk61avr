@@ -54,6 +54,7 @@
 void uart_poll_init(void);
 void uart_poll_send_byte(uint8_t aDataByte);
 void uart_poll_send_string(const char *aDataString);
+void uart_poll_send_string_p(const char *progmem_s);
 uint8_t uart_poll_receive_byte(void);
 void uart_poll_new_line(void);
 #endif // UART_POLL_MODE

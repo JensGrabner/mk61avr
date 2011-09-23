@@ -102,6 +102,28 @@ void uart_poll_send_string(const char *aDataString)
 }
 
 
+/*! \fn void uart_poll_send_string(const char *aDataString)
+    \brief Отправляет строку символов в UART порт.
+    \param Указатель на строку символов из программной памяти.
+    \return Нет.
+*/
+void uart_poll_send_string_p(const char *progmem_s)
+{
+    // До тех пор, пока строка не пустая
+    //while (pgm_read_byte(progmem_s) != 0x00)
+    //{
+        //USART_Tx(pgm_read_byte(data++));
+    //}
+
+
+    while (pgm_read_byte(progmem_s) != 0x00)
+    {
+        uart_poll_send_byte(pgm_read_byte(progmem_s++));
+    }
+}
+
+
+
 /*! \fn uint8_t uart_poll_receive_byte(void)
     \brief Принимает байт из UART порта.
     \param Нет.

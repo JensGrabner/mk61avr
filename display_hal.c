@@ -40,8 +40,8 @@
 
 /*! \fn void display_init(LcdInitType aInitType)
     \brief Инициализирует дисплей и выбирает тип курсора.
-    \param тип курсора (значение из LcdInitType enum).
-    \return none.
+    \param Тип курсора (значение из LcdInitType enum).
+    \return Нет.
 */
 void display_init(uint8_t aInitType)
 {
@@ -77,8 +77,8 @@ void display_init(uint8_t aInitType)
 
 /*! \fn void display_clear(void)
     \brief Очищает дисплей и устанавливает курсор на начфльную позицию.
-    \param void.
-    \return none.
+    \param Нет.
+    \return Нет.
 */
 void display_clear(void)
 {
@@ -90,8 +90,8 @@ void display_clear(void)
 
 /*! \fn void display_home(void)
     \brief Устанавливает курсор на начальную позицию.
-    \param void.
-    \return none.
+    \param Нет.
+    \return Нет.
 */
 void display_home(void)
 {
@@ -105,7 +105,7 @@ void display_home(void)
     \brief Устанавливает курсор на указанную позицию.
     \param aX - горизонтальная позиция (0: слева).
     \param aY - вертикальная позиция (0: первая строка).
-    \return none.
+    \return Нет.
 */
 void display_gotoxy(uint8_t aX, uint8_t aY)
 {
@@ -117,8 +117,8 @@ void display_gotoxy(uint8_t aX, uint8_t aY)
 
 /*! \fn void display_putc(char aC)
     \brief Отображает символ в текущей позиции курсора.
-    \param aС - символ для отображения.
-    \return none.
+    \param Символ для отображения.
+    \return Нет.
 */
 void display_putc(char aC)
 {
@@ -130,8 +130,8 @@ void display_putc(char aC)
 
 /*! \fn void display_puts(const char *aS)
     \brief Отображает строку без перевода на новую строку.
-    \param aS - строка для отображения.
-    \return none.
+    \param Строка для отображения.
+    \return Нет.
 */
 void display_puts(const char *aS)
 {
@@ -139,6 +139,21 @@ void display_puts(const char *aS)
     lcd44780_puts(aS);
 #endif // #if defined (HD44780_LCD_IN_USE) || defined (KS0073_LCD_IN_USE)
 }
+
+
+/*! \fn void display_puts_p(const char *progmem_s)
+    \brief Отображает строку из программной памяти без перевода на новую строку.
+    \param Строка для отображения из программной памяти.
+    \return Нет.
+*/
+void display_puts_p(const char *progmem_s)
+{
+#if defined (HD44780_LCD_IN_USE) || defined (KS0073_LCD_IN_USE)
+    lcd44780_puts_p(progmem_s);
+#endif // #if defined (HD44780_LCD_IN_USE) || defined (KS0073_LCD_IN_USE)
+}
+
+
 
 
 

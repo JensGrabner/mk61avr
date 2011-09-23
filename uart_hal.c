@@ -80,6 +80,20 @@ void uart_send_string(const char *aDataString)
 }
 
 
+/*! \fn void uart_send_string(const char *aDataString)
+    \brief Отправляет строку символов в UART порт (аппаратно-независимо).
+    \param Указатель на строку символов из программной памяти.
+    \return Нет.
+*/
+void uart_send_string_p(const char *progmem_s)
+{
+#ifdef UART_POLL_MODE
+    uart_poll_send_string_p(progmem_s);
+#endif // UART_POLL_MODE
+}
+
+
+
 /*! \fn uint8_t uart_receive_byte(void)
     \brief Принимает байт из UART порта (аппаратно-независимо).
     \param Нет.

@@ -65,6 +65,7 @@ void display_home(void);
 void display_gotoxy(uint8_t aX, uint8_t aY);
 void display_putc(char aC);
 void display_puts(const char *aS);
+void display_puts_p(const char *aS);
 
 
 #endif // _DISPLAY_HAL_H_

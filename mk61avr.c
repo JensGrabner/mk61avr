@@ -49,7 +49,7 @@
 #endif // UART_IN_USE
 
 // Данные
-const char mk61avr_ver[] = "MK-61-Avr v.0.1";       //!< Строка версии
+const char mk61avr_ver[] PROGMEM = "MK-61-Avr v.0.1"; //!< Строка версии
 
 
 /*! \fn int8_t main(void)
@@ -69,7 +69,7 @@ int main(void)
     display_clear();
 
     _delay_ms(200);
-    display_puts(mk61avr_ver);
+    display_puts_p(mk61avr_ver);
 
 #ifdef UART_IN_USE
     // Инициализиовать UART порт
@@ -77,7 +77,7 @@ int main(void)
 
     _delay_ms(200);
     uart_new_line();
-    uart_send_string(mk61avr_ver);
+    uart_send_string_p(mk61avr_ver);
 #endif // #ifdef UART_IN_USE
 // *************************** TODO **********************************
 

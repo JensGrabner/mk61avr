@@ -46,6 +46,7 @@
 void uart_init(void);
 void uart_send_byte(uint8_t aDataByte);
 void uart_send_string(const char *aDataString);
+void uart_send_string_p(const char *progmem_s);
 uint8_t uart_receive_byte(void);
 void uart_new_line(void);
 
