@@ -251,10 +251,11 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 AVRDUDE_PROGRAMMER = stk500v2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = com1    # programmer connected to serial device
+#AVRDUDE_PORT = com1    # programmer connected to serial device
 #AVRDUDE_PORT = com2    # programmer connected to serial device
 #AVRDUDE_PORT = com3    # programmer connected to serial device
 #AVRDUDE_PORT = com4    # programmer connected to serial device
+AVRDUDE_PORT = /dev/ttyS0 # programmer connected to COM1 in Linux
 #AVRDUDE_PORT = /dev/ttyUSB0 # programmer connected to USB-to-Serial in Linux
 #AVRDUDE_PORT = /dev/ttyUSB1 # programmer connected to USB-to-Serial in Linux
 
@@ -268,7 +269,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 
 # Uncomment the following if you do /not/ wish a verification to be
 # performed after programming the device.
-AVRDUDE_NO_VERIFY = -V
+#AVRDUDE_NO_VERIFY = -V
 
 # Increase verbosity level.  Please use this when submitting bug
 # reports about avrdude. See <http://savannah.nongnu.org/projects/avrdude>
